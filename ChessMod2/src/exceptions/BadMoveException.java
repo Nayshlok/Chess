@@ -4,15 +4,28 @@ import model.Coordinate;
 
 public class BadMoveException extends Exception{
 
+	private Coordinate a; //Where the error occurred
+	private boolean capture;
+	
 	public BadMoveException(Coordinate a, boolean capture){
 		super();
-		if(capture == false){
+		if(!capture){
 			System.err.println("There is a piece at " + a.toString() + " and capture is off.");
 		}
 		else{
 			System.err.println("There is not a piece at " + a.toString() + " and capture is on");
 		}
 		
+		this.a = a;
+		this.capture = capture;
+	}
+	
+	public Coordinate getCoordinate(){
+		return a;
+	}
+	
+	public boolean getCapture(){
+		return capture;
 	}
 	
 }

@@ -15,7 +15,7 @@ public class Bishop extends Piece {
 
 	@Override
 	public char getPieceCharacter() {
-		if(isLight() == true){
+		if(isLight()){
 			return 'B';
 		}
 		else{

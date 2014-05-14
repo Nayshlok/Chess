@@ -10,6 +10,7 @@ import model.Board;
 import model.Coordinate;
 import exceptions.NoPieceException;
 import exceptions.BadMoveException;
+import exceptions.OccupiedSpaceException;
 import exceptions.OutOfBoardRange;
 import factories.BishopFactory;
 import factories.Factory;
@@ -23,16 +24,27 @@ public class ChessManager {
 
 	private int movesMade, failedMoves;
 	private Board gameBoard;
+	private HashMap<Character, Factory> pieceNames;
 	
 	public ChessManager(){
 		movesMade =  failedMoves = 0;
 		gameBoard = new Board();
 		
+		pieceNames = new HashMap<Character, Factory>();
+		pieceNames.put('Q', new QueenFactory());
+		pieceNames.put('K', new KingFactory());
+		pieceNames.put('B', new BishopFactory());
+		pieceNames.put('N', new KnightFactory());
+		pieceNames.put('R', new RookFactory());
+		pieceNames.put('P', new PawnFactory());
 	}
-	
+
 	public void run(String fileName){
 		
 		readMoves("data\\setup.txt");
+		
+		System.out.println(gameBoard.printBoard());
+		
 		readMoves(fileName);
 		System.out.println("Number of succesful moves " + movesMade);
 		System.out.println("Number of failed moves " + failedMoves);
@@ -84,21 +96,6 @@ public class ChessManager {
 			createPiece(move);
 			success = true;
 		}
-		/*if(move.matches("[A-Ha-h][1-8] [A-Ha-h][1-8]")){
-			char col1 = move.charAt(0);
-			char row1 = move.charAt(1);
-			char col2 = move.charAt(3);
-			char row2 = move.charAt(4);
-			
-			try {
-				this.gameBoard.movePieces(new Coordinate(col1, row1), new Coordinate(col2, row2), false);
-			} catch (NoPieceException | OccupiedSpaceException e) {
-				//e.printStackTrace();
-			}
-			
-			System.out.println("Move piece at " + col1 + row1 + " to the location " + col2 + row2);
-			success = true;
-		}*/
 		if(move.matches("[A-Ha-h][1-8] [A-Ha-h][1-8]\\*?")){
 			char col1 = move.charAt(0);
 			char row1 = move.charAt(1);
@@ -170,15 +167,13 @@ public class ChessManager {
 			isLight = false;
 		}
 		
-		HashMap<Character, Factory> pieceNames = new HashMap<Character, Factory>();
-		pieceNames.put('Q', new QueenFactory());
-		pieceNames.put('K', new KingFactory());
-		pieceNames.put('B', new BishopFactory());
-		pieceNames.put('N', new KnightFactory());
-		pieceNames.put('R', new RookFactory());
-		pieceNames.put('P', new PawnFactory());
 		
-		this.gameBoard.placePiece(pieceNames.get(piece).create(isLight), location);			
+		
+		try {
+			this.gameBoard.placePiece(pieceNames.get(piece).create(isLight), location);
+		} catch (OccupiedSpaceException e) {
+
+		}			
 		
 		//System.out.println("Place " + colorName + " " + pieceName + " at location " 
 			//	+ Character.toUpperCase(col) + row);

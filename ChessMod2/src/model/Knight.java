@@ -15,7 +15,7 @@ public class Knight extends Piece {
 
 	@Override
 	public char getPieceCharacter() {
-		if(isLight() == true){
+		if(isLight()){
 			return 'N';
 		}
 		else{

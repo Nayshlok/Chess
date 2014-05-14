@@ -11,7 +11,7 @@ public class King extends Piece {
 	
 	@Override
 	public char getPieceCharacter() {
-		if(isLight() == true){
+		if(isLight()){
 			return 'K';
 		}
 		else{

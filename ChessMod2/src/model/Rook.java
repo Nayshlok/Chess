@@ -15,7 +15,7 @@ public class Rook extends Piece {
 
 	@Override
 	public char getPieceCharacter() {
-		if(isLight() == true){
+		if(isLight()){
 			return 'R';
 		}
 		else{
