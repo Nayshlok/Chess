@@ -1,6 +1,7 @@
 package exceptions;
 
 import model.Coordinate;
+import model.Piece;
 
 public class BadMoveException extends Exception{
 
@@ -13,7 +14,7 @@ public class BadMoveException extends Exception{
 			System.err.println("There is a piece at " + a.toString() + " and capture is off.");
 		}
 		else{
-			System.err.println("There is not a piece at " + a.toString() + " and capture is on");
+			System.err.println("There is not a at " + a.toString() + " and capture is on");
 		}
 		
 		this.a = a;

@@ -6,8 +6,8 @@ import model.Piece;
 public class KingFactory implements Factory{
 	
 	@Override
-	public Piece create(boolean isLight) {
-		return new King(isLight);
+	public Piece create(boolean isLight, int rowCount, int colCount) {
+		return new King(isLight, rowCount, colCount);
 	}
 
 	

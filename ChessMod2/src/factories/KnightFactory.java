@@ -6,8 +6,8 @@ import model.Piece;
 public class KnightFactory implements Factory{
 	
 	@Override
-	public Piece create(boolean isLight) {
-		return new Knight(isLight);
+	public Piece create(boolean isLight, int rowCount, int colCount) {
+		return new Knight(isLight, rowCount, colCount);
 	}
 
 	

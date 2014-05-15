@@ -6,8 +6,8 @@ import model.Piece;
 public class RookFactory implements Factory{
 	
 	@Override
-	public Piece create(boolean isLight) {
-		return new Rook(isLight);
+	public Piece create(boolean isLight, int rowCount, int colCount) {
+		return new Rook(isLight, rowCount, colCount);
 	}
 
 	

@@ -8,8 +8,12 @@ import java.util.HashMap;
 
 import model.Board;
 import model.Coordinate;
-import exceptions.NoPieceException;
+import model.Pawn;
+import model.Piece;
 import exceptions.BadMoveException;
+import exceptions.BlockedPathException;
+import exceptions.NoFriendlyFireException;
+import exceptions.NoPieceException;
 import exceptions.OccupiedSpaceException;
 import exceptions.OutOfBoardRange;
 import factories.BishopFactory;
@@ -42,6 +46,8 @@ public class ChessManager {
 	public void run(String fileName){
 		
 		readMoves("data\\setup.txt");
+		System.out.println("Number of succesful moves " + movesMade);
+		System.out.println("Number of failed moves " + failedMoves);
 		
 		System.out.println(gameBoard.printBoard());
 		
@@ -49,11 +55,14 @@ public class ChessManager {
 		System.out.println("Number of succesful moves " + movesMade);
 		System.out.println("Number of failed moves " + failedMoves);
 
-		System.out.println(gameBoard.printBoard());
+		//System.out.println(gameBoard.printBoard());
 		
 	}
 	
 	public void readMoves(String fileName){
+		movesMade = 0;
+		failedMoves = 0;
+		
 		FileReader read;
 		try {
 			read = new FileReader(fileName);
@@ -72,7 +81,7 @@ public class ChessManager {
 				catch(OutOfBoardRange e){
 					e.printStackTrace();
 				}
-				
+	
 			}
 
 		} catch (FileNotFoundException e) {
@@ -110,13 +119,32 @@ public class ChessManager {
 				capture = false;
 			}
 			
+			Coordinate location1 = new Coordinate(col1, row1);
+			Coordinate location2 = new Coordinate(col2, row2);
+			
 			try {
-				this.gameBoard.movePieces(new Coordinate(col1, row1), new Coordinate(col2, row2), capture);
-				String response = "Move piece at " + col1 + row1 + " to the location " + col2 + row2;
-				if(capture == true){response += " and capture the piece in that spot.";}
-				System.out.println(response);
-				success = true;
-			} catch (NoPieceException | BadMoveException e) {
+				Piece piece1 = this.gameBoard.getPiece(location1);
+				boolean legalMove = false;
+				if(piece1 instanceof Pawn){
+					legalMove = ((Pawn)piece1).moveCheck(location1, location2, capture);
+				} else{
+					legalMove = piece1.moveCheck(location1, location2);
+				}
+				if(legalMove){
+					
+					String response = "Move " + piece1.toString() + " at " + col1 + row1 + " to the location " + col2 + row2;
+					if(capture){response += " and capture the " + this.gameBoard.getPiece(location2) + " in that spot.";}
+					
+					this.gameBoard.movePieces(location1, location2, capture);
+					
+					System.out.println(response);
+					success = true;
+					System.out.println(this.gameBoard.printBoard());
+				}
+				else{
+					System.err.println("Invalid move for " + piece1);
+				}
+			} catch (NoPieceException | BadMoveException | BlockedPathException | NoFriendlyFireException e) {
 				
 			}	
 			
@@ -139,7 +167,7 @@ public class ChessManager {
 				System.out.println("Move piece at " + col1Piece1 + row1Piece1 + " to " + col2Piece1 + row2Piece1 + " and move piece at " 
 						+ col1Piece2 + row1Piece2 + " to " + col2Piece2 + row2Piece2);
 				success = true;
-			} catch (NoPieceException | BadMoveException e) {
+			} catch (NoPieceException | BadMoveException | BlockedPathException | NoFriendlyFireException e) {
 				
 			}
 			
@@ -158,7 +186,7 @@ public class ChessManager {
 		boolean isLight;
 		String pieceName = "";
 		String colorName = "";
-		
+
 		if(color == 'L'){
 			colorName = "Light";
 			isLight = true;
@@ -167,10 +195,9 @@ public class ChessManager {
 			isLight = false;
 		}
 		
-		
-		
+				
 		try {
-			this.gameBoard.placePiece(pieceNames.get(piece).create(isLight), location);
+			this.gameBoard.placePiece(pieceNames.get(piece).create(isLight, gameBoard.getRows(), gameBoard.getColumns()), location);
 		} catch (OccupiedSpaceException e) {
 
 		}			

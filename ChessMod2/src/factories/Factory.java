@@ -4,6 +4,6 @@ import model.Piece;
 
 public interface Factory {
 
-	public Piece create(boolean isLight);
+	public Piece create(boolean isLight, int rowCount, int colCount);
 	
 }
