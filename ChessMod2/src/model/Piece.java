@@ -4,18 +4,19 @@ import exceptions.BadMoveException;
 
 public abstract class Piece {
 
-	private boolean isLight;
+	private boolean isLight, hasMoved;
 	private int rowCount, colCount;
 	
 	public Piece(boolean isLight, int rowCount, int colCount){
 		this.setLight(isLight);
+		this.setMoved(false);
 		this.rowCount = rowCount;
 		this.colCount = colCount;
 	}
 	
 	public abstract void move(Coordinate toLocation, boolean capture) throws BadMoveException;
 	
-	public abstract boolean moveCheck(Coordinate location1, Coordinate location2);
+	public abstract boolean moveCheck(Coordinate location1, Coordinate location2, boolean capture);
 	
 	public boolean isLight() {
 		return isLight;
@@ -25,7 +26,17 @@ public abstract class Piece {
 		this.isLight = isLight;
 	}
 	
+	public boolean hasMoved(){
+		return hasMoved;
+	}
+	
+	public void setMoved(boolean hasMoved){
+		this.hasMoved = hasMoved;
+	}
+	
 	public abstract char getPieceCharacter();
+	
+	public abstract String toString();
 	
 	public boolean checkInRange(Coordinate location){
 		boolean inRange = false;

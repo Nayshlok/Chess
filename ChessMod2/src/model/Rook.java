@@ -28,7 +28,7 @@ public class Rook extends Piece {
 	}
 	
 	@Override
-	public boolean moveCheck(Coordinate location1, Coordinate location2) {
+	public boolean moveCheck(Coordinate location1, Coordinate location2, boolean capture) {
 		
 		boolean isValid = false;
 		

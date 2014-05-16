@@ -13,3 +13,11 @@ d1 e3
 //Super Knight Jump
 c3 g5
 c3 d5
+//Bishop Movement
+F1 b6
+C8 e6
+a8 b7
+//Try to Castle
+f1 e2
+g1 h3
+e1 g1 h1 f1

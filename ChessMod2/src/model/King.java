@@ -28,7 +28,7 @@ public class King extends Piece {
 
 
 	@Override
-	public boolean moveCheck(Coordinate location1, Coordinate location2) {
+	public boolean moveCheck(Coordinate location1, Coordinate location2, boolean capture) {
 		boolean isValid = false;
 		
 		if((location2.getX() == location1.getX())

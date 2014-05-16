@@ -20,35 +20,19 @@ public class Pawn extends Piece {
 		// TODO Auto-generated method stub
 		
 	}
-	
-	@Override
-	public boolean moveCheck(Coordinate location1, Coordinate location2) {
-		
-		boolean isValid = false;
-		
-		if(location1.getX() == location2.getX()){
-			if((isLight() && (location2.getY() == location1.getY() + 1 || location2.getY() == location1.getY() + 2))
-					|| (!isLight() && (location2.getY() == location1.getY() - 1 || location2.getY() == location1.getY() - 2))){
-				isValid = true;
-			}
-		}
-		else if((location2.getX() == location1.getX() + 1) || (location2.getX() == location1.getX() - 1)){
-			if((isLight() && (location2.getY() == location1.getY() + 1)) 
-					|| (!isLight() && (location2.getY() == location1.getY() - 1)) ){
-				isValid = true;
-			}
-		}
-		
-		return isValid;
-	}
+	// Can only jump 2 when in start location. FIX IT!!!
 
 	public boolean moveCheck(Coordinate location1, Coordinate location2, boolean capture) {
 		
 		boolean isValid = false;
 		
 		if((location1.getX() == location2.getX()) && !capture){
-			if((isLight() && (location2.getY() == location1.getY() + 1 || location2.getY() == location1.getY() + 2))
-					|| (!isLight() && (location2.getY() == location1.getY() - 1 || location2.getY() == location1.getY() - 2))){
+			if((isLight() && (location2.getY() == location1.getY() + 1))
+					|| (!isLight() && (location2.getY() == location1.getY() - 1))) {
+				isValid = true;
+			}
+			if(!hasMoved() && ((isLight() && (location2.getY() == location1.getY() + 2)) 
+					|| (!isLight() && (location2.getY() == location1.getY() - 2)))) {
 				isValid = true;
 			}
 		}

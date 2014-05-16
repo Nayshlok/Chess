@@ -16,6 +16,7 @@ import exceptions.NoFriendlyFireException;
 import exceptions.NoPieceException;
 import exceptions.OccupiedSpaceException;
 import exceptions.OutOfBoardRange;
+import exceptions.OutOfOrderException;
 import factories.BishopFactory;
 import factories.Factory;
 import factories.KingFactory;
@@ -29,10 +30,12 @@ public class ChessManager {
 	private int movesMade, failedMoves;
 	private Board gameBoard;
 	private HashMap<Character, Factory> pieceNames;
+	private boolean isLightTurn;
 	
 	public ChessManager(){
 		movesMade =  failedMoves = 0;
 		gameBoard = new Board();
+		isLightTurn = true;
 		
 		pieceNames = new HashMap<Character, Factory>();
 		pieceNames.put('Q', new QueenFactory());
@@ -45,7 +48,7 @@ public class ChessManager {
 
 	public void run(String fileName){
 		
-		readMoves("data\\setup.txt");
+		readMoves("data\\setupNoPawn.txt");
 		System.out.println("Number of succesful moves " + movesMade);
 		System.out.println("Number of failed moves " + failedMoves);
 		
@@ -78,8 +81,8 @@ public class ChessManager {
 						failedMoves++;
 					}
 				}
-				catch(OutOfBoardRange e){
-					e.printStackTrace();
+				catch(OutOfBoardRange | OutOfOrderException e){
+					//e.printStackTrace();
 				}
 	
 			}
@@ -96,7 +99,7 @@ public class ChessManager {
 
 	}
 
-	public boolean interpretMove(String move) throws OutOfBoardRange{
+	public boolean interpretMove(String move) throws OutOfBoardRange, OutOfOrderException{
 		
 		boolean success = false;
 		move = move.toUpperCase();
@@ -124,21 +127,22 @@ public class ChessManager {
 			
 			try {
 				Piece piece1 = this.gameBoard.getPiece(location1);
-				boolean legalMove = false;
-				if(piece1 instanceof Pawn){
-					legalMove = ((Pawn)piece1).moveCheck(location1, location2, capture);
-				} else{
-					legalMove = piece1.moveCheck(location1, location2);
+				if(isLightTurn != piece1.isLight()){
+					throw new OutOfOrderException(piece1.isLight());
 				}
-				if(legalMove){
-					
+				boolean legalMove = false;
+
+				if(piece1.moveCheck(location1, location2, capture)){
+
 					String response = "Move " + piece1.toString() + " at " + col1 + row1 + " to the location " + col2 + row2;
 					if(capture){response += " and capture the " + this.gameBoard.getPiece(location2) + " in that spot.";}
-					
+
 					this.gameBoard.movePieces(location1, location2, capture);
-					
+
 					System.out.println(response);
 					success = true;
+					isLightTurn = !isLightTurn;
+					if(!piece1.hasMoved()){piece1.setMoved(true);}
 					System.out.println(this.gameBoard.printBoard());
 				}
 				else{
@@ -146,9 +150,8 @@ public class ChessManager {
 				}
 			} catch (NoPieceException | BadMoveException | BlockedPathException | NoFriendlyFireException e) {
 				
-			}	
+			}
 			
-
 		}
 		if(move.matches("[A-Ha-h][1-8] [A-Ha-h][1-8] [A-Ha-h][1-8] [A-Ha-h][1-8]")){
 			char col1Piece1 = move.charAt(0);
@@ -162,12 +165,14 @@ public class ChessManager {
 			char row2Piece2 = move.charAt(10);
 			
 			try {
-				this.gameBoard.movePieces(new Coordinate(col1Piece1, row1Piece1), new Coordinate(col2Piece1, row2Piece1), false);
-				this.gameBoard.movePieces(new Coordinate(col1Piece2, row1Piece2), new Coordinate(col2Piece2, row2Piece2), false);
+
+				this.gameBoard.castle(new Coordinate(col1Piece1, row1Piece1), new Coordinate(col2Piece1, row2Piece1), 
+						new Coordinate(col1Piece2, row1Piece2), new Coordinate(col2Piece2, row2Piece2));
 				System.out.println("Move piece at " + col1Piece1 + row1Piece1 + " to " + col2Piece1 + row2Piece1 + " and move piece at " 
 						+ col1Piece2 + row1Piece2 + " to " + col2Piece2 + row2Piece2);
 				success = true;
-			} catch (NoPieceException | BadMoveException | BlockedPathException | NoFriendlyFireException e) {
+				
+			} catch (NoPieceException e) {
 				
 			}
 			
@@ -176,7 +181,7 @@ public class ChessManager {
 	}
 	
 	public void createPiece(String move) throws OutOfBoardRange{
-		
+
 		char piece = move.charAt(0);
 		char color = move.charAt(1);
 		char col = move.charAt(2);
@@ -184,25 +189,22 @@ public class ChessManager {
 		
 		Coordinate location = new Coordinate(col, row);
 		boolean isLight;
-		String pieceName = "";
-		String colorName = "";
 
 		if(color == 'L'){
-			colorName = "Light";
 			isLight = true;
 		} else {
-			colorName = "Dark";
 			isLight = false;
 		}
 		
-				
+		Piece newPiece = pieceNames.get(piece).create(isLight, gameBoard.getRows(), gameBoard.getColumns());
+		
 		try {
-			this.gameBoard.placePiece(pieceNames.get(piece).create(isLight, gameBoard.getRows(), gameBoard.getColumns()), location);
+			this.gameBoard.placePiece(newPiece, location);
 		} catch (OccupiedSpaceException e) {
 
 		}			
 		
-		//System.out.println("Place " + colorName + " " + pieceName + " at location " 
-			//	+ Character.toUpperCase(col) + row);
+		//System.out.println("Place " + newPiece + " at location " 
+		//		+ Character.toUpperCase(col) + row);
 	}
 }

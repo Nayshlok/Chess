@@ -20,10 +20,8 @@ public class Board {
 	public String printBoard(){
 		
 		String printedBoard = "  A B C D E F G H\n";
-		int count = 1;
 		for(int i = 0; i < board.length; i++){
-			printedBoard += count + "|";
-			count++;
+			printedBoard += (i+1) + "|";
 			for(int j = 0; j < board[i].length; j++){
 				if(board[i][j] == null){
 					printedBoard += "- ";
@@ -110,6 +108,13 @@ public class Board {
 		}
 		
 		return pathClear;
+	}
+	
+	public void castle(Coordinate piece1Location1, Coordinate piece1Location2, Coordinate piece2Location1, Coordinate piece2Location2) throws NoPieceException{
+		
+		Piece piece1;
+		Piece piece2;
+				
 	}
 	
 	public void placePiece(Piece piece, Coordinate location) throws OccupiedSpaceException{

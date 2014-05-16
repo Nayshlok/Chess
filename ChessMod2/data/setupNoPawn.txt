@@ -6,14 +6,6 @@ KLe1
 BLf1
 NLg1
 RLh1
-PLa2
-PLb2
-PLc2
-PLd2
-PLe2
-PLf2
-PLg2
-PLh2
 Rda8
 Ndb8
 Bdc8
@@ -22,11 +14,3 @@ Qdd8
 Bdf8
 Ndg8
 Rdh8
-Pda7
-Pdb7
-Pdc7
-Pdd7
-Pde7
-Pdf7
-Pdg7
-Pdh7

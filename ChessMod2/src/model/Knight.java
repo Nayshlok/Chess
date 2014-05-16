@@ -23,7 +23,7 @@ public class Knight extends Piece {
 	}
 
 	@Override
-	public boolean moveCheck(Coordinate location1, Coordinate location2) {
+	public boolean moveCheck(Coordinate location1, Coordinate location2, boolean capture) {
 		boolean isValid = false;
 		
 		int changeX = Math.abs(location1.getX() - location2.getX());
