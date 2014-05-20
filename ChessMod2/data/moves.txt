@@ -1,23 +1,12 @@
-//Rook cannot pass through knight
-b1 c3
-a1 a3
-a3 e3
-//Knight can pass through
-f8 g7
-g8 f6
-//Dark Queen Moves
-d8 a5
-a5 d5
-//Light Queen with knight move.
-d1 e3
-//Super Knight Jump
-c3 g5
-c3 d5
-//Bishop Movement
-F1 b6
-C8 e6
-a8 b7
-//Try to Castle
-f1 e2
+f1 d3
+//Random move for Light
+b1 b4
+//invalid move for black then valid move.
+g8 g4
+b8 a6
 g1 h3
+c8 e6
 e1 g1 h1 f1
+d8 d4
+a1 a2
+e8 c8 a8 d8

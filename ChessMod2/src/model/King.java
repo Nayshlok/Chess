@@ -31,15 +31,13 @@ public class King extends Piece {
 	public boolean moveCheck(Coordinate location1, Coordinate location2, boolean capture) {
 		boolean isValid = false;
 		
-		if((location2.getX() == location1.getX())
-				|| (location2.getX() == location1.getX() + 1)
-				|| (location2.getX() == location1.getX() - 1)){
-			if((location2.getY() == location1.getY())
-					|| (location2.getY() == location1.getY() + 1)
-					|| (location2.getY() == location1.getY() - 1)){
-				isValid = true;
-			}
-		}
+		int changeX = Math.abs(location1.getX() - location2.getX());
+		int changeY = Math.abs(location1.getY() - location2.getY());
+		
+		if((changeX <= 1 || changeX >= -1)
+				&& (changeY <= 1 || changeY >= -1)){
+			isValid = true;
+		} 
 		
 		return isValid;
 	}

@@ -7,6 +7,13 @@ import exceptions.BadMoveException;
 import exceptions.OccupiedSpaceException;
 import exceptions.OutOfBoardRange;
 
+/**
+ * The board holds the locations of all the pieces as well as peforms the actual move. It will check to see if the move can 
+ * be performed or if there is something in the way. It doesn't care about the pieces individual rules, but rather the physical
+ * possibility of a move.
+ * @author David Borland
+ *
+ */
 public class Board {
 
 	private Piece[][] board;
@@ -16,7 +23,11 @@ public class Board {
 	public Board(){
 		board = new Piece[COLUMN][ROW];
 	}
-
+	
+	/**
+	 * Returns a string containing an ascii board of the current status of chess.
+	 * @return
+	 */
 	public String printBoard(){
 		
 		String printedBoard = "  A B C D E F G H\n";
@@ -37,7 +48,21 @@ public class Board {
 		return printedBoard;
 	}
 
-	public void movePieces(Coordinate location1, Coordinate location2, boolean capture) throws NoPieceException, BadMoveException, BlockedPathException, NoFriendlyFireException{
+	/**
+	 * This method performs checks to see first if there is a piece to grab, then if there is a piece at the location you want to move to.
+	 * At the same time it checks to see if you gave the command to capture. If the capture is true and the place is empty it will throw a
+	 * BadMoveException(), also if you aren't capturing and the second place is full it will throw a BadMoveException. Finally it makes sure
+	 * that there is a clear path to the second location. It ignores individual piece rules.
+	 * @param location1
+	 * @param location2
+	 * @param capture
+	 * @param castle
+	 * @throws NoPieceException
+	 * @throws BadMoveException
+	 * @throws BlockedPathException
+	 * @throws NoFriendlyFireException
+	 */
+	public void movePieces(Coordinate location1, Coordinate location2, boolean capture, boolean castle) throws NoPieceException, BadMoveException, BlockedPathException, NoFriendlyFireException{
 		
 		Piece holder = null;
 		if(!isEmpty(location1)){
@@ -50,7 +75,8 @@ public class Board {
 					}
 				}
 				if((checkPath(location1, location2))
-						|| (Character.toUpperCase(holder.getPieceCharacter()) == 'N') ){
+						|| (Character.toUpperCase(holder.getPieceCharacter()) == 'N'
+						|| castle) ){
 					board[location1.getY()][location1.getX()] = null;
 					board[location2.getY()][location2.getX()] = holder;
 				}
@@ -67,6 +93,13 @@ public class Board {
 		}
 	}
 
+	/**
+	 * This method will draw a diagonal or straight path from the second location to the first checking that all spaces are empty.
+	 * If a piece exists on any square it will return false.
+	 * @param location1
+	 * @param location2
+	 * @return
+	 */
 	public boolean checkPath(Coordinate location1, Coordinate location2){
 		boolean pathClear = true;
 		
@@ -110,13 +143,12 @@ public class Board {
 		return pathClear;
 	}
 	
-	public void castle(Coordinate piece1Location1, Coordinate piece1Location2, Coordinate piece2Location1, Coordinate piece2Location2) throws NoPieceException{
-		
-		Piece piece1;
-		Piece piece2;
-				
-	}
-	
+	/**
+	 * If the location specified is clear, it will place a piece on the board.
+	 * @param piece
+	 * @param location
+	 * @throws OccupiedSpaceException
+	 */
 	public void placePiece(Piece piece, Coordinate location) throws OccupiedSpaceException{
 		if(isEmpty(location)){
 			board[location.getY()][location.getX()] = piece;
@@ -127,6 +159,11 @@ public class Board {
 		
 	}
 
+	/**
+	 * Checks to see if the specified space is clear. Returns false if a piece exists at the coordinate
+	 * @param location
+	 * @return
+	 */
 	public boolean isEmpty(Coordinate location){
 		if(board[location.getY()][location.getX()] == null){
 			return true;
@@ -136,6 +173,12 @@ public class Board {
 		}
 	}
 
+	/**
+	 * Returns the piece at a specified coordinate. If no piece exists it will throw a NoPieceException
+	 * @param location
+	 * @return
+	 * @throws NoPieceException
+	 */
 	public Piece getPiece(Coordinate location) throws NoPieceException{
 		if(board[location.getY()][location.getX()] != null){
 			return board[location.getY()][location.getX()];
