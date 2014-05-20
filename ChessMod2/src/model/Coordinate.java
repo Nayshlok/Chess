@@ -1,19 +1,17 @@
 package model;
 
-import exceptions.OutOfBoardRange;
-
 public class Coordinate {
 
 	private int x, y;
 	
 	public Coordinate(){}
 	
-	public Coordinate(int x, int y) throws OutOfBoardRange{
+	public Coordinate(int x, int y){
 		this.setX(x);
 		this.setY(y);
 	}
 	
-	public Coordinate(char x, char y) throws OutOfBoardRange{
+	public Coordinate(char x, char y){
 		this.setX(convertLettertoInt(x));
 		this.setY(convertNumbertoInt(y));
 	}
@@ -22,26 +20,16 @@ public class Coordinate {
 		return x;
 	}
 
-	public void setX(int x) throws OutOfBoardRange{
-		if(x >= 0 && x < 8){
+	public void setX(int x){
 			this.x = x;
-		}
-		else{
-			throw new OutOfBoardRange(x);
-		}
 	}
 
 	public int getY() {
 		return y;
 	}
 
-	public void setY(int y) throws OutOfBoardRange {
-		if(y >= 0 && y < 8){
+	public void setY(int y){
 			this.y = y;
-		}
-		else{
-			throw new OutOfBoardRange(y);
-		}
 	}
 	
 	public int convertNumbertoInt(char y){

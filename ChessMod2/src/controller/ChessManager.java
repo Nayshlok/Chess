@@ -4,12 +4,13 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import model.Board;
 import model.Coordinate;
+import model.King;
 import model.Piece;
+import model.Rook;
 import exceptions.BadMoveException;
 import exceptions.BlockedPathException;
 import exceptions.CastleException;
@@ -56,7 +57,7 @@ public class ChessManager {
 
 	public void run(String fileName){
 		
-		readMoves("data\\setupNoPawn.txt");
+		readMoves("data\\setup.txt");
 		System.out.println("Number of succesful moves " + movesMade);
 		System.out.println("Number of failed moves " + failedMoves);
 		
@@ -66,15 +67,6 @@ public class ChessManager {
 		System.out.println("Number of succesful moves " + movesMade);
 		System.out.println("Number of failed moves " + failedMoves);
 
-		try {
-			ArrayList<Coordinate> moves = this.gameBoard.getPiece(new Coordinate('G', '8')).possibleMoves(new Coordinate('G', '8'));
-			System.out.println();
-		} catch (NoPieceException | OutOfBoardRange e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//System.out.println(gameBoard.printBoard());
-		
 	}
 	
 	/**
@@ -113,7 +105,7 @@ public class ChessManager {
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.err.println("The file did not read properly. Make sure it is a text file with proper information.");
+			System.err.println("An IO exception occured");
 			e.printStackTrace();
 		}
 		
@@ -155,6 +147,7 @@ public class ChessManager {
 			Coordinate location2 = new Coordinate(col2, row2);
 			
 			try {
+				//Turn handling
 				Piece piece1 = this.gameBoard.getPiece(location1);
 				if(isLightTurn != piece1.isLight()){
 					throw new OutOfOrderException(piece1.isLight());
@@ -167,6 +160,7 @@ public class ChessManager {
 
 				System.out.println(response);
 				success = true;
+				//Switch turns
 				isLightTurn = !isLightTurn;
 				if(!piece1.hasMoved()){piece1.setMoved(true);}
 				System.out.println(this.gameBoard.printBoard());
@@ -181,6 +175,7 @@ public class ChessManager {
 			try {
 				castle(move);
 				success = true;
+				//switch turns
 				isLightTurn = !isLightTurn;
 			} catch (CastleException e) {
 				System.err.println("The castling failed because " + e.getMessage());
@@ -217,6 +212,11 @@ public class ChessManager {
 		//		+ Character.toUpperCase(col) + row);
 	}
 	
+	
+	public void movePiece(String move){
+		
+	}
+	
 	/**
 	 * Takes in a double move string and tests first if the pieces are valid for a castle,
 	 * then it will see if the coordinates work for a valid 
@@ -243,7 +243,7 @@ public class ChessManager {
 			Coordinate rookLocation2;
 			Piece piece1 = gameBoard.getPiece(new Coordinate(col1Piece1, row1Piece1));
 			Piece piece2 = gameBoard.getPiece(new Coordinate(col1Piece2, row1Piece2));
-			
+			//Turn handling
 			if(isLightTurn != piece1.isLight()){
 				throw new OutOfOrderException(piece1.isLight());
 			}
@@ -252,13 +252,13 @@ public class ChessManager {
 				throw new CastleException("Piece are not the same color");
 			}
 			if(!piece1.hasMoved() && !piece2.hasMoved()){
-				if(Character.toUpperCase(piece1.getPieceCharacter()) == 'K' && Character.toUpperCase(piece2.getPieceCharacter()) == 'R'){
+				if(piece1 instanceof King && piece2 instanceof Rook){
 					kingLocation1 = new Coordinate(col1Piece1, row1Piece1);
 					kingLocation2 = new Coordinate(col2Piece1, row2Piece1);
 					rookLocation1 = new Coordinate(col1Piece2, row1Piece2);
 					rookLocation2 = new Coordinate(col2Piece2, row2Piece2);									
 				}
-				else if (Character.toUpperCase(piece1.getPieceCharacter()) == 'R' && Character.toUpperCase(piece2.getPieceCharacter()) == 'K'){
+				else if (piece1 instanceof Rook && piece2 instanceof King){
 					kingLocation1 = new Coordinate(col1Piece2, row1Piece2);
 					kingLocation2 = new Coordinate(col2Piece2, row2Piece2);
 					rookLocation1 = new Coordinate(col1Piece1, row1Piece1);
@@ -298,7 +298,7 @@ public class ChessManager {
 			piece2.setMoved(true);
 			System.out.println(this.gameBoard.printBoard());
 			
-		} catch (NoPieceException | OutOfBoardRange | BadMoveException | NoFriendlyFireException | BlockedPathException | IllegalMoveException e) {
+		} catch (NoPieceException | BadMoveException | NoFriendlyFireException | BlockedPathException | IllegalMoveException e) {
 			
 		}
 	}

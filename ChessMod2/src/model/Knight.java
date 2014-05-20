@@ -55,19 +55,21 @@ public class Knight extends Piece {
 		
 		int x = location1.getX();
 		int y = location1.getY();
+		Coordinate[] possibleMoves = {
+				new Coordinate(x + 2, y - 1),
+				new Coordinate(x + 2, y + 1),
+				new Coordinate(x - 2, y - 1),
+				new Coordinate(x - 2, y + 1),
+				new Coordinate(x + 1, y - 2),
+				new Coordinate(x - 1, y - 2),
+				new Coordinate(x + 1, y + 2),
+				new Coordinate(x - 1, y + 2)	
+		};
 		
-		try {
-			moves.add(new Coordinate(x + 2, y - 1));
-			moves.add(new Coordinate(x + 2, y + 1));
-			moves.add(new Coordinate(x - 2, y - 1));
-			moves.add(new Coordinate(x - 2, y + 1));
-			moves.add(new Coordinate(x + 1, y - 2));
-			moves.add(new Coordinate(x - 1, y - 2));
-			moves.add(new Coordinate(x + 1, y + 2));
-			moves.add(new Coordinate(x - 1, y + 2));
-
-		} catch (OutOfBoardRange e) {
-			
+		for(int i = 0; i < possibleMoves.length; i++){
+			if(this.checkInRange(possibleMoves[i])){
+				moves.add(possibleMoves[i]);
+			}
 		}
 		
 		return moves;

@@ -63,19 +63,21 @@ public class King extends Piece {
 		
 		int x = location1.getX();
 		int y = location1.getY();
+		Coordinate[] possibleMoves = {
+			new Coordinate(x - 1, y - 1),
+			new Coordinate(x - 1, y + 1),
+			new Coordinate(x + 1, y - 1),
+			new Coordinate(x + 1, y + 1),
+			new Coordinate(x - 1, y),
+			new Coordinate(x, y - 1),
+			new Coordinate(x + 1, y),
+			new Coordinate(x, y + 1)	
+		};
 		
-		try {
-			moves.add(new Coordinate(x - 1, y - 1));
-			moves.add(new Coordinate(x - 1, y + 1));
-			moves.add(new Coordinate(x + 1, y - 1));
-			moves.add(new Coordinate(x + 1, y + 1));
-			moves.add(new Coordinate(x - 1, y));
-			moves.add(new Coordinate(x, y - 1));
-			moves.add(new Coordinate(x + 1, y));
-			moves.add(new Coordinate(x, y + 1));
-
-		} catch (OutOfBoardRange e) {
-			
+		for(int i = 0; i < possibleMoves.length; i++){
+			if(this.checkInRange(possibleMoves[i])){
+				moves.add(possibleMoves[i]);
+			}
 		}
 		
 		return moves;

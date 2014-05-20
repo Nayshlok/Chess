@@ -66,47 +66,49 @@ public class Bishop extends Piece {
 		
 		while(x < this.getRowCount() && y < this.getColCount()){
 			if(x != startX && y != startY){
-				try {
+				Coordinate toAdd = new Coordinate(x, y);
+				if(this.checkInRange(toAdd)){
 					moves.add(new Coordinate(x, y));
-				} catch (OutOfBoardRange e) {
-					//Choosing to ignore, because it should be unable to get out of range due to while constraint
 				}
-				x++;
-				y++;
 			}
+			x++;
+			y++;
 		}
-		while(x > this.getRowCount() && y < this.getColCount()){
+		x = startX;
+		y = startY;
+		while(x >= 0 && y < this.getColCount()){
 			if(x != startX && y != startY){
-				try {
+				Coordinate toAdd = new Coordinate(x, y);
+				if(this.checkInRange(toAdd)){
 					moves.add(new Coordinate(x, y));
-				} catch (OutOfBoardRange e) {
-					//Choosing to ignore, because it should be unable to get out of range due to while constraint
 				}
-				x--;
-				y++;
 			}
+			x--;
+			y++;
 		}
-		while(x < this.getRowCount() && y > this.getColCount()){
+		x = startX;
+		y = startY;
+		while(x < this.getRowCount() && y >= 0){
 			if(x != startX && y != startY){
-				try {
+				Coordinate toAdd = new Coordinate(x, y);
+				if(this.checkInRange(toAdd)){
 					moves.add(new Coordinate(x, y));
-				} catch (OutOfBoardRange e) {
-					//Choosing to ignore, because it should be unable to get out of range due to while constraint
 				}
-				x++;
-				y--;
 			}
+			x++;
+			y--;
 		}
-		while(x > this.getRowCount() && y > this.getColCount()){
+		x = startX;
+		y = startY;
+		while(x >= 0 && y >= 0){
 			if(x != startX && y != startY){
-				try {
+				Coordinate toAdd = new Coordinate(x, y);
+				if(this.checkInRange(toAdd)){
 					moves.add(new Coordinate(x, y));
-				} catch (OutOfBoardRange e) {
-					//Choosing to ignore, because it should be unable to get out of range due to while constraint
 				}
-				x--;
-				y--;
 			}
+			x--;
+			y--;
 		}
 		
 		return moves;

@@ -1,18 +1,12 @@
-b1 c3
-b7 b5
-b5 c4
-c2 c4
-c3 e4
-f7 f5
-h2 h4
-f5 e4
-f5 e4*
-h1 h3
-b8 c6
-h3 e3
-c6 e5
-e3 e4*
-e5 c4
-e4 c4*
-b5 b3
-
+f1 d3
+//Random move for Light
+b1 b4
+//invalid move for black then valid move.
+g8 g4
+b8 a6
+g1 h3
+c8 e6
+e1 g1 h1 f1
+d8 d4
+a1 a2
+e8 c8 a8 d8

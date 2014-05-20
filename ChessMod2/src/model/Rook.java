@@ -54,6 +54,51 @@ public class Rook extends Piece {
 	@Override
 	public ArrayList<Coordinate> possibleMoves(Coordinate location1) {
 		ArrayList<Coordinate> moves = new ArrayList<Coordinate>();
+
+		int startX = location1.getX();
+		int startY = location1.getY();
+		int x = startX;
+		int y = startY;
+
+		while(x < this.getColCount()){
+			if(x != startX && y != startY){
+				Coordinate toAdd = new Coordinate(x, y);
+				if(this.checkInRange(toAdd)){
+					moves.add(new Coordinate(x, y));
+				}
+			}
+			x++;
+		}
+		x = startX;
+		while(x >= 0){
+			if(x != startX && y != startY){
+				Coordinate toAdd = new Coordinate(x, y);
+				if(this.checkInRange(toAdd)){
+					moves.add(new Coordinate(x, y));
+				}
+			}
+			x--;
+		}
+		x = startX;
+		while(y < this.getRowCount()){
+			if(x != startX && y != startY){
+				Coordinate toAdd = new Coordinate(x, y);
+				if(this.checkInRange(toAdd)){
+					moves.add(new Coordinate(x, y));
+				}
+			}
+			y++;
+		}
+		y = startY;
+		while(y >= 0){
+			if(x != startX && y != startY){
+				Coordinate toAdd = new Coordinate(x, y);
+				if(this.checkInRange(toAdd)){
+					moves.add(new Coordinate(x, y));
+				}
+			}
+			y--;
+		}
 		
 		return moves;
 	}

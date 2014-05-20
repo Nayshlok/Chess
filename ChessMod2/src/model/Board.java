@@ -63,7 +63,7 @@ public class Board {
 	 * @throws BlockedPathException
 	 * @throws NoFriendlyFireException
 	 * @throws IllegalMoveException 
-	 */
+	 */	
 	public void movePieces(Coordinate location1, Coordinate location2, boolean capture, boolean castle) throws NoPieceException, BadMoveException, BlockedPathException, NoFriendlyFireException, IllegalMoveException{
 		
 		Piece holder = getPiece(location1);
@@ -112,13 +112,9 @@ public class Board {
 		PathChecker: while(x2 != x1 || y2 != y1){		
 			
 			if(firstCheckDone){
-				try {
-					if(!isEmpty(new Coordinate(x2, y2))){
-						pathClear = false;
-						break PathChecker;
-					}
-				} catch (OutOfBoardRange e) {
-					e.printStackTrace();
+				if(!isEmpty(new Coordinate(x2, y2))){
+					pathClear = false;
+					break PathChecker;
 				}
 			}
 			else{

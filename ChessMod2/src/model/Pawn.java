@@ -28,7 +28,9 @@ public class Pawn extends Piece {
 		
 		boolean isValid = false;
 		
-		if((location1.getX() == location2.getX()) && !capture){
+		int changeX = Math.abs(location1.getX() - location2.getX());
+		
+		if((changeX == 0) && !capture){
 			if((isLight() && (location2.getY() == location1.getY() + 1))
 					|| (!isLight() && (location2.getY() == location1.getY() - 1))) {
 				isValid = true;
@@ -38,7 +40,7 @@ public class Pawn extends Piece {
 				isValid = true;
 			}
 		}
-		else if(((location2.getX() == location1.getX() + 1) || (location2.getX() == location1.getX() - 1)) && capture){
+		else if((changeX == 1) && capture){
 			if((isLight() && (location2.getY() == location1.getY() + 1)) 
 					|| (!isLight() && (location2.getY() == location1.getY() - 1)) ){
 				isValid = true;
@@ -59,6 +61,29 @@ public class Pawn extends Piece {
 	@Override
 	public ArrayList<Coordinate> possibleMoves(Coordinate location1) {
 		ArrayList<Coordinate> moves = new ArrayList<Coordinate>();
+		
+		int x = location1.getX();
+		int y = location1.getY();		
+		Coordinate[] possibleMoves = new Coordinate[4];
+		
+		if(isLight()){
+			possibleMoves[0] = new Coordinate(x, y + 1);
+			possibleMoves[1] = new Coordinate(x, y + 2);
+			possibleMoves[2] = new Coordinate(x + 1, y + 1);
+			possibleMoves[3] = new Coordinate(x - 1, y + 1);
+		}
+		else{
+			possibleMoves[0] = new Coordinate(x, y - 1);
+			possibleMoves[1] = new Coordinate(x, y - 2);
+			possibleMoves[2] = new Coordinate(x + 1, y - 1);
+			possibleMoves[3] = new Coordinate(x - 1, y - 1);
+		}
+		
+		for(int i = 0; i < possibleMoves.length; i++){
+			if(this.checkInRange(possibleMoves[i])){
+				moves.add(possibleMoves[i]);
+			}
+		}
 		
 		return moves;
 	}
