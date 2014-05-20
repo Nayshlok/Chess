@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 import exceptions.BadMoveException;
 
 public abstract class Piece {
@@ -17,6 +19,8 @@ public abstract class Piece {
 	public abstract void move(Coordinate toLocation, boolean capture) throws BadMoveException;
 	
 	public abstract boolean moveCheck(Coordinate location1, Coordinate location2, boolean capture);
+	
+	public abstract ArrayList<Coordinate> possibleMoves(Coordinate location1);
 	
 	public boolean isLight() {
 		return isLight;
@@ -47,6 +51,13 @@ public abstract class Piece {
 		}	
 		
 		return inRange;
+	}
+	
+	public int getRowCount(){
+		return rowCount;
+	}
+	public int getColCount(){
+		return colCount;
 	}
 	
 }

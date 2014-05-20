@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 import exceptions.BadMoveException;
 
 public class Rook extends Piece {
@@ -47,6 +49,13 @@ public class Rook extends Piece {
 		else{
 			return "Dark Rook";
 		}
+	}
+
+	@Override
+	public ArrayList<Coordinate> possibleMoves(Coordinate location1) {
+		ArrayList<Coordinate> moves = new ArrayList<Coordinate>();
+		
+		return moves;
 	}
 	
 }

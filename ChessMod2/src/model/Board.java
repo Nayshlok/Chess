@@ -1,6 +1,7 @@
 package model;
 
 import exceptions.BlockedPathException;
+import exceptions.IllegalMoveException;
 import exceptions.NoFriendlyFireException;
 import exceptions.NoPieceException;
 import exceptions.BadMoveException;
@@ -61,12 +62,12 @@ public class Board {
 	 * @throws BadMoveException
 	 * @throws BlockedPathException
 	 * @throws NoFriendlyFireException
+	 * @throws IllegalMoveException 
 	 */
-	public void movePieces(Coordinate location1, Coordinate location2, boolean capture, boolean castle) throws NoPieceException, BadMoveException, BlockedPathException, NoFriendlyFireException{
+	public void movePieces(Coordinate location1, Coordinate location2, boolean capture, boolean castle) throws NoPieceException, BadMoveException, BlockedPathException, NoFriendlyFireException, IllegalMoveException{
 		
-		Piece holder = null;
-		if(!isEmpty(location1)){
-			holder = getPiece(location1);
+		Piece holder = getPiece(location1);
+		if(holder.moveCheck(location1, location2, capture)){
 			if((isEmpty(location2) && !capture) ||
 					(!isEmpty(location2) && capture)){
 				if(capture){
@@ -87,9 +88,8 @@ public class Board {
 			else{
 				throw new BadMoveException(location2, capture);
 			}
-		}
-		else{
-			throw new NoPieceException(location1);
+		} else{
+			throw new IllegalMoveException(holder.toString());
 		}
 	}
 

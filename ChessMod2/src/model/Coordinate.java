@@ -63,4 +63,18 @@ public class Coordinate {
 	public String toString(){
 		return (convertInttoChar(this.x) + "" + (y + 1));
 	}
+	
+	@Override
+	public boolean equals(Object a){
+		boolean isEqual = false;
+		
+		if(a instanceof Coordinate){
+			if((this.getX() == ((Coordinate)a).getX())
+					&& (this.getY() == ((Coordinate)a).getY())){
+				isEqual = true;
+			}
+		}
+		
+		return isEqual;
+	}
 }

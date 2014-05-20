@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 public class Pawn extends Piece {
 
 	public Pawn(boolean isLight, int rowCount, int colCount) {
@@ -53,6 +55,12 @@ public class Pawn extends Piece {
 		else{
 			return "Dark Pawn";
 		}
+	}
+	@Override
+	public ArrayList<Coordinate> possibleMoves(Coordinate location1) {
+		ArrayList<Coordinate> moves = new ArrayList<Coordinate>();
+		
+		return moves;
 	}
 	
 }

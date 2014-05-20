@@ -1,6 +1,9 @@
 package model;
 
+import java.util.ArrayList;
+
 import exceptions.BadMoveException;
+import exceptions.OutOfBoardRange;
 
 public class Bishop extends Piece {
 
@@ -50,6 +53,63 @@ public class Bishop extends Piece {
 		else{
 			return "Dark Bishop";
 		}
+	}
+
+	@Override
+	public ArrayList<Coordinate> possibleMoves(Coordinate location1) {
+		ArrayList<Coordinate> moves = new ArrayList<Coordinate>();
+		
+		int startX = location1.getX();
+		int startY = location1.getY();
+		int x = startX;
+		int y = startY;
+		
+		while(x < this.getRowCount() && y < this.getColCount()){
+			if(x != startX && y != startY){
+				try {
+					moves.add(new Coordinate(x, y));
+				} catch (OutOfBoardRange e) {
+					//Choosing to ignore, because it should be unable to get out of range due to while constraint
+				}
+				x++;
+				y++;
+			}
+		}
+		while(x > this.getRowCount() && y < this.getColCount()){
+			if(x != startX && y != startY){
+				try {
+					moves.add(new Coordinate(x, y));
+				} catch (OutOfBoardRange e) {
+					//Choosing to ignore, because it should be unable to get out of range due to while constraint
+				}
+				x--;
+				y++;
+			}
+		}
+		while(x < this.getRowCount() && y > this.getColCount()){
+			if(x != startX && y != startY){
+				try {
+					moves.add(new Coordinate(x, y));
+				} catch (OutOfBoardRange e) {
+					//Choosing to ignore, because it should be unable to get out of range due to while constraint
+				}
+				x++;
+				y--;
+			}
+		}
+		while(x > this.getRowCount() && y > this.getColCount()){
+			if(x != startX && y != startY){
+				try {
+					moves.add(new Coordinate(x, y));
+				} catch (OutOfBoardRange e) {
+					//Choosing to ignore, because it should be unable to get out of range due to while constraint
+				}
+				x--;
+				y--;
+			}
+		}
+		
+		return moves;
 	}
 	
 }

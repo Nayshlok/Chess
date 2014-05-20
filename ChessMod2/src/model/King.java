@@ -1,5 +1,9 @@
 package model;
 
+import java.util.ArrayList;
+
+import exceptions.OutOfBoardRange;
+
 public class King extends Piece {
 
 	public King(boolean isLight, int rowCount, int colCount) {
@@ -49,5 +53,31 @@ public class King extends Piece {
 		else{
 			return "Dark King";
 		}
+	}
+
+
+
+	@Override
+	public ArrayList<Coordinate> possibleMoves(Coordinate location1) {
+		ArrayList<Coordinate> moves = new ArrayList<Coordinate>();
+		
+		int x = location1.getX();
+		int y = location1.getY();
+		
+		try {
+			moves.add(new Coordinate(x - 1, y - 1));
+			moves.add(new Coordinate(x - 1, y + 1));
+			moves.add(new Coordinate(x + 1, y - 1));
+			moves.add(new Coordinate(x + 1, y + 1));
+			moves.add(new Coordinate(x - 1, y));
+			moves.add(new Coordinate(x, y - 1));
+			moves.add(new Coordinate(x + 1, y));
+			moves.add(new Coordinate(x, y + 1));
+
+		} catch (OutOfBoardRange e) {
+			
+		}
+		
+		return moves;
 	}
 }

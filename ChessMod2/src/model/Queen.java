@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 public class Queen extends Piece {
 
 	public Queen(boolean isLight, int rowCount, int colCount) {
@@ -48,6 +50,13 @@ public class Queen extends Piece {
 		else{
 			return "Dark Queen";
 		}
+	}
+
+	@Override
+	public ArrayList<Coordinate> possibleMoves(Coordinate location1) {
+		ArrayList<Coordinate> moves = new ArrayList<Coordinate>();
+		
+		return moves;
 	}
 	
 }
