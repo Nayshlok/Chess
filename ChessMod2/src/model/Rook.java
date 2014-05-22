@@ -13,12 +13,8 @@ public class Rook extends Piece {
 
 	@Override
 	public char getPieceCharacter() {
-		if(isLight()){
-			return 'R';
-		}
-		else{
-			return 'r';
-		}
+		char piece = (isLight()) ? 'R' : 'r';
+		return piece;
 	}
 
 
@@ -43,12 +39,8 @@ public class Rook extends Piece {
 	}
 
 	public String toString(){
-		if(isLight()){
-			return "Light Rook";
-		}
-		else{
-			return "Dark Rook";
-		}
+		String message = isLight() ? "Light Rook" : "Dark Rook";		
+		return message;
 	}
 
 	@Override
@@ -61,47 +53,35 @@ public class Rook extends Piece {
 		int y = startY;
 
 		while(x < this.getColCount()){
-			if(x != startX && y != startY){
-				Coordinate toAdd = new Coordinate(x, y);
-				if(this.checkInRange(toAdd)){
-					moves.add(new Coordinate(x, y));
-				}
+			if(x != startX || y != startY){
+				moves.add(new Coordinate(x, y));
 			}
 			x++;
 		}
 		x = startX;
 		while(x >= 0){
-			if(x != startX && y != startY){
-				Coordinate toAdd = new Coordinate(x, y);
-				if(this.checkInRange(toAdd)){
-					moves.add(new Coordinate(x, y));
-				}
+			if(x != startX || y != startY){
+				moves.add(new Coordinate(x, y));
 			}
 			x--;
 		}
 		x = startX;
 		while(y < this.getRowCount()){
-			if(x != startX && y != startY){
-				Coordinate toAdd = new Coordinate(x, y);
-				if(this.checkInRange(toAdd)){
-					moves.add(new Coordinate(x, y));
-				}
+			if(x != startX || y != startY){
+				moves.add(new Coordinate(x, y));
 			}
 			y++;
 		}
 		y = startY;
 		while(y >= 0){
-			if(x != startX && y != startY){
-				Coordinate toAdd = new Coordinate(x, y);
-				if(this.checkInRange(toAdd)){
-					moves.add(new Coordinate(x, y));
-				}
+			if(x != startX || y != startY){
+				moves.add(new Coordinate(x, y));
 			}
 			y--;
 		}
 		
 		return moves;
-	}
+	}	
 	
 }
 

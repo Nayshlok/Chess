@@ -14,6 +14,7 @@ import model.Rook;
 import exceptions.BadMoveException;
 import exceptions.BlockedPathException;
 import exceptions.CastleException;
+import exceptions.CheckException;
 import exceptions.IllegalMoveException;
 import exceptions.NoFriendlyFireException;
 import exceptions.NoPieceException;
@@ -58,15 +59,18 @@ public class ChessManager {
 	public void run(String fileName){
 		
 		readMoves("data\\setup.txt");
-		System.out.println("Number of succesful moves " + movesMade);
-		System.out.println("Number of failed moves " + failedMoves);
+		//System.out.println("Number of succesful moves " + movesMade);
+		//System.out.println("Number of failed moves " + failedMoves);
 		
 		System.out.println(gameBoard.printBoard());
 		
 		readMoves(fileName);
 		System.out.println("Number of succesful moves " + movesMade);
 		System.out.println("Number of failed moves " + failedMoves);
-
+		System.out.println(gameBoard.printBoard());
+		System.out.println("White king in check: " + gameBoard.checkForCheck(gameBoard.getKing(true), true));
+		System.out.println("Black King in check: " + gameBoard.checkForCheck(gameBoard.getKing(false), false));
+		
 	}
 	
 	/**
@@ -96,16 +100,11 @@ public class ChessManager {
 				catch(OutOfBoardRange | OutOfOrderException e){
 					//e.printStackTrace();
 				}
-
 			}
 			reader.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			System.err.println("No file was found at the given location");
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.err.println("An IO exception occured");
 			e.printStackTrace();
 		}
 		
@@ -134,49 +133,28 @@ public class ChessManager {
 			char row1 = move.charAt(1);
 			char col2 = move.charAt(3);
 			char row2 = move.charAt(4);
-			boolean capture;
-			int a = move.length();
-			if(move.length() == 6){
-				capture = true;
-			}
-			else{
-				capture = false;
-			}
+			boolean capture = (move.length() == 6) ? true : false;
 			
 			Coordinate location1 = new Coordinate(col1, row1);
 			Coordinate location2 = new Coordinate(col2, row2);
 			
-			try {
-				//Turn handling
-				Piece piece1 = this.gameBoard.getPiece(location1);
-				if(isLightTurn != piece1.isLight()){
-					throw new OutOfOrderException(piece1.isLight());
-				}
-
-				String response = "Move " + piece1.toString() + " at " + col1 + row1 + " to the location " + col2 + row2;
-				if(capture){response += " and capture the " + this.gameBoard.getPiece(location2) + " in that spot.";}
-
-				this.gameBoard.movePieces(location1, location2, capture, false);
-
-				System.out.println(response);
+	
+			if(movePiece(location1, location2, capture)){
 				success = true;
-				//Switch turns
-				isLightTurn = !isLightTurn;
-				if(!piece1.hasMoved()){piece1.setMoved(true);}
-				System.out.println(this.gameBoard.printBoard());
-
-			} catch (NoPieceException | BadMoveException | BlockedPathException | NoFriendlyFireException | IllegalMoveException e) {
-				
+				changeTurn();
+				displayCheckStatus();
 			}
 			
 		}
 		//Castling move, or any other double move.
 		if(move.matches("[A-Ha-h][1-8] [A-Ha-h][1-8] [A-Ha-h][1-8] [A-Ha-h][1-8]")){
 			try {
-				castle(move);
-				success = true;
 				//switch turns
-				isLightTurn = !isLightTurn;
+				if(castle(move)){
+					changeTurn();
+					displayCheckStatus();
+					success = true;
+				}
 			} catch (CastleException e) {
 				System.err.println("The castling failed because " + e.getMessage());
 			}	
@@ -192,29 +170,42 @@ public class ChessManager {
 		char row = move.charAt(3);
 		
 		Coordinate location = new Coordinate(col, row);
-		boolean isLight;
-
-		if(color == 'L'){
-			isLight = true;
-		} else {
-			isLight = false;
-		}
+		boolean isLight = (color == 'L') ? true : false;
 		
 		Piece newPiece = pieceNames.get(piece).create(isLight, gameBoard.getRows(), gameBoard.getColumns());
 		
 		try {
 			this.gameBoard.placePiece(newPiece, location);
 		} catch (OccupiedSpaceException e) {
-
+			
 		}			
-		
-		//System.out.println("Place " + newPiece + " at location " 
-		//		+ Character.toUpperCase(col) + row);
 	}
 	
 	
-	public void movePiece(String move){
-		
+	public boolean movePiece(Coordinate location1, Coordinate location2, boolean capture) throws OutOfOrderException{
+				
+		try {
+			//Turn handling
+			Piece piece1 = this.gameBoard.getPiece(location1);
+			if(isLightTurn != piece1.isLight()){
+				throw new OutOfOrderException(piece1.isLight());
+			}
+
+			String response = "Move " + piece1.toString() + " at " + location1.toString() + " to the location " + location2.toString();
+			if(capture){response += " and capture the " + this.gameBoard.getPiece(location2) + " in that spot.";}
+
+			this.gameBoard.movePieces(location1, location2, capture, false);
+
+			System.out.println(response);
+			//Switch turns
+			if(!piece1.hasMoved()){piece1.setMoved(true);}
+			System.out.println(this.gameBoard.printBoard());
+
+			return true;
+		} catch (NoPieceException | BadMoveException | BlockedPathException | NoFriendlyFireException | IllegalMoveException | CheckException e) {
+			
+		}
+		return false;
 	}
 	
 	/**
@@ -224,7 +215,7 @@ public class ChessManager {
 	 * @throws CastleException
 	 * @throws OutOfOrderException
 	 */
-	public void castle(String move) throws CastleException, OutOfOrderException{
+	public boolean castle(String move) throws CastleException, OutOfOrderException{
 		char col1Piece1 = move.charAt(0);
 		char row1Piece1 = move.charAt(1);
 		char col2Piece1 = move.charAt(3);
@@ -271,7 +262,6 @@ public class ChessManager {
 				throw new CastleException("Piece has already moved.");
 			}
 			
-			
 			if(!gameBoard.checkPath(rookLocation1, kingLocation1)){
 				throw new BlockedPathException();
 			}
@@ -281,12 +271,7 @@ public class ChessManager {
 			int kingChangeY = Math.abs(kingLocation1.getY() - kingLocation2.getY());
 			int rookChangeX = Math.abs(rookLocation1.getX() - rookLocation2.getX());
 			int rookChangeY = Math.abs(rookLocation1.getY() - rookLocation2.getY());
-			int rookMove;			
-			if(rookLocation1.getX() < kingLocation1.getX()){
-				rookMove = 3;
-			} else{
-				rookMove = 2;
-			}
+			int rookMove = (rookLocation1.getX() > kingLocation1.getX()) ? 3 : 2;
 			
 			if(kingChangeY == 0 && kingChangeX == 2 && rookChangeY == 0 && rookChangeX == rookMove){
 				gameBoard.movePieces(rookLocation1, rookLocation2, false, true);
@@ -297,9 +282,20 @@ public class ChessManager {
 			piece1.setMoved(true);
 			piece2.setMoved(true);
 			System.out.println(this.gameBoard.printBoard());
-			
-		} catch (NoPieceException | BadMoveException | NoFriendlyFireException | BlockedPathException | IllegalMoveException e) {
+			return true;
+		} catch (NoPieceException | BadMoveException | NoFriendlyFireException | BlockedPathException | IllegalMoveException | CheckException e) {
 			
 		}
+		return false;
+	}
+	
+	public void changeTurn(){
+		isLightTurn = !isLightTurn;
+
+	}
+	
+	public void displayCheckStatus(){
+		String message = (isLightTurn) ? "Light King" : "Dark King";
+		System.out.println(message + " in check: " + this.gameBoard.checkForCheck(gameBoard.getKing(isLightTurn), isLightTurn));
 	}
 }

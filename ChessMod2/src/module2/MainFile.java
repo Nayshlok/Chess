@@ -6,7 +6,7 @@ public class MainFile {
 
 	public static void main(String[] args){
 		ChessManager moveReader = new ChessManager();
-		moveReader.run("data\\moves.txt");
+		moveReader.run(args[0]);
 	}
 	
 }

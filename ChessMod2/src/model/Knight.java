@@ -2,8 +2,6 @@ package model;
 
 import java.util.ArrayList;
 
-import exceptions.OutOfBoardRange;
-
 public class Knight extends Piece {
 
 	public Knight(boolean isLight, int rowCount, int colCount) {
@@ -13,12 +11,8 @@ public class Knight extends Piece {
 
 	@Override
 	public char getPieceCharacter() {
-		if(isLight()){
-			return 'N';
-		}
-		else{
-			return 'n';
-		}
+		char piece = (isLight()) ? 'N' : 'n';
+		return piece;
 	}
 
 	@Override
@@ -41,12 +35,8 @@ public class Knight extends Piece {
 	}
 
 	public String toString(){
-		if(isLight()){
-			return "Light Knight";
-		}
-		else{
-			return "Dark Knight";
-		}
+		String message = isLight() ? "Light Knight" : "Dark Knight";		
+		return message;
 	}
 
 	@Override

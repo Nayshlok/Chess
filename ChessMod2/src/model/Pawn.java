@@ -10,12 +10,8 @@ public class Pawn extends Piece {
 	}
 	@Override
 	public char getPieceCharacter() {
-		if(isLight()){
-			return 'P';
-		}
-		else{
-			return 'p';
-		}
+		char piece = (isLight()) ? 'P' : 'p';
+		return piece;
 	}
 	@Override
 	public void move(Coordinate toLocation, boolean capture) {
@@ -51,12 +47,8 @@ public class Pawn extends Piece {
 	}
 	
 	public String toString(){
-		if(isLight()){
-			return "Light Pawn";
-		}
-		else{
-			return "Dark Pawn";
-		}
+		String message = isLight() ? "Light Pawn" : "Dark Pawn";		
+		return message;
 	}
 	@Override
 	public ArrayList<Coordinate> possibleMoves(Coordinate location1) {

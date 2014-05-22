@@ -11,12 +11,8 @@ public class Queen extends Piece {
 
 	@Override
 	public char getPieceCharacter() {
-		if(isLight()){
-			return 'Q';
-		}
-		else{
-			return 'q';
-		}
+		char piece = (isLight()) ? 'Q' : 'q';
+		return piece;
 	}
 
 
@@ -44,12 +40,8 @@ public class Queen extends Piece {
 	}
 
 	public String toString(){
-		if(isLight()){
-			return "Light Queen";
-		}
-		else{
-			return "Dark Queen";
-		}
+		String message = isLight() ? "Light Queen" : "Dark Queen";		
+		return message;
 	}
 
 	@Override

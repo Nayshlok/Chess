@@ -3,7 +3,6 @@ package model;
 import java.util.ArrayList;
 
 import exceptions.BadMoveException;
-import exceptions.OutOfBoardRange;
 
 public class Bishop extends Piece {
 
@@ -14,12 +13,8 @@ public class Bishop extends Piece {
 
 	@Override
 	public char getPieceCharacter() {
-		if(isLight()){
-			return 'B';
-		}
-		else{
-			return 'b';
-		}
+		char piece = (isLight()) ? 'B' : 'b';
+		return piece;
 	}
 
 	@Override
@@ -47,12 +42,8 @@ public class Bishop extends Piece {
 
 	@Override
 	public String toString(){
-		if(isLight()){
-			return "Light Bishop";
-		}
-		else{
-			return "Dark Bishop";
-		}
+		String message = isLight() ? "Light Bishop" : "Dark Bishop";		
+		return message;
 	}
 
 	@Override

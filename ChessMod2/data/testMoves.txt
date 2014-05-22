@@ -1,3 +1,4 @@
+//tests movement logic iwth no pawns
 f1 d3
 //Random move for Light
 b1 b4
@@ -10,3 +11,48 @@ e1 g1 h1 f1
 d8 d4
 a1 a2
 e8 c8 a8 d8
+
+//moves with no pawns, tests castling
+a2 a4
+e7 e5
+g2 g3
+d8 f6
+f1 h3
+b7 b6
+g1 f3
+b8 c6
+h1 f1 e1 g1
+c8 a6
+f3 d4
+a8 c8 e8 d8
+e8 c8 a1 c1
+e8 g8 h8 f8
+a8 d8 e8 c8
+f2 f4
+f4 e5*
+e5 f4*
+f4 g3
+f1 f6*
+f6 g6
+
+//moves for a full board
+a2 a3
+e7 e5
+a3 a4
+d8 f6
+a4 a5
+d8 e7
+b1 c3
+h7 h6
+c3 b5
+h6 h5
+b5 d6
+h5 h4
+d6 f5
+
+//For checking only for check, turn off setup
+Kde8
+Kle1
+rdh1
+plf1
+f1 f2

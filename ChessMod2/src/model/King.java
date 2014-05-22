@@ -2,8 +2,6 @@ package model;
 
 import java.util.ArrayList;
 
-import exceptions.OutOfBoardRange;
-
 public class King extends Piece {
 
 	public King(boolean isLight, int rowCount, int colCount) {
@@ -15,12 +13,8 @@ public class King extends Piece {
 	
 	@Override
 	public char getPieceCharacter() {
-		if(isLight()){
-			return 'K';
-		}
-		else{
-			return 'k';
-		}
+		char piece = (isLight()) ? 'K' : 'k';
+		return piece;
 	}
 
 	@Override
@@ -38,8 +32,8 @@ public class King extends Piece {
 		int changeX = Math.abs(location1.getX() - location2.getX());
 		int changeY = Math.abs(location1.getY() - location2.getY());
 		
-		if((changeX <= 1 || changeX >= -1)
-				&& (changeY <= 1 || changeY >= -1)){
+		if((changeX <= 1 && changeX >= -1)
+				&& (changeY <= 1 && changeY >= -1)){
 			isValid = true;
 		} 
 		
@@ -47,12 +41,8 @@ public class King extends Piece {
 	}
 
 	public String toString(){
-		if(isLight()){
-			return "Light King";
-		}
-		else{
-			return "Dark King";
-		}
+		String message = isLight() ? "Light King" : "Dark King";		
+		return message;
 	}
 
 

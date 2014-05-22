@@ -1,8 +1,8 @@
 RLa1
 NLb1
 BLc1
-QLd1
-KLe1
+QLe1
+KLd1
 BLf1
 NLg1
 RLh1
@@ -17,8 +17,8 @@ PLh2
 Rda8
 Ndb8
 Bdc8
-Kde8
-Qdd8
+Kdd8
+Qde8
 Bdf8
 Ndg8
 Rdh8

@@ -9,13 +9,7 @@ public class BadMoveException extends Exception{
 	private boolean capture;
 	
 	public BadMoveException(Coordinate a, boolean capture){
-		super();
-		if(!capture){
-			System.err.println("There is a piece at " + a.toString() + " and capture is off.");
-		}
-		else{
-			System.err.println("There is not a at " + a.toString() + " and capture is on");
-		}
+		super("There is a piece at " + a.toString() + (capture ? " and capture is on" : " and capture is off."));
 		
 		this.a = a;
 		this.capture = capture;
