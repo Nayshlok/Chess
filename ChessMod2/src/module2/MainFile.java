@@ -8,5 +8,5 @@ public class MainFile {
 		ChessManager moveReader = new ChessManager();
 		moveReader.run(args[0]);
 	}
-	
+
 }

@@ -102,42 +102,32 @@ public class Queen extends Piece {
 			x--;
 			y--;
 		}
+		x = startX;
+		y = startY;
 		while(x < this.getColCount()){
-			if(x != startX && y != startY){
-				Coordinate toAdd = new Coordinate(x, y);
-				if(this.checkInRange(toAdd)){
-					moves.add(new Coordinate(x, y));
-				}
+			if(x != startX || y != startY){
+				moves.add(new Coordinate(x, y));
 			}
 			x++;
 		}
 		x = startX;
 		while(x >= 0){
-			if(x != startX && y != startY){
-				Coordinate toAdd = new Coordinate(x, y);
-				if(this.checkInRange(toAdd)){
-					moves.add(new Coordinate(x, y));
-				}
+			if(x != startX || y != startY){
+				moves.add(new Coordinate(x, y));
 			}
 			x--;
 		}
 		x = startX;
 		while(y < this.getRowCount()){
-			if(x != startX && y != startY){
-				Coordinate toAdd = new Coordinate(x, y);
-				if(this.checkInRange(toAdd)){
-					moves.add(new Coordinate(x, y));
-				}
+			if(x != startX || y != startY){
+				moves.add(new Coordinate(x, y));
 			}
 			y++;
 		}
 		y = startY;
 		while(y >= 0){
-			if(x != startX && y != startY){
-				Coordinate toAdd = new Coordinate(x, y);
-				if(this.checkInRange(toAdd)){
-					moves.add(new Coordinate(x, y));
-				}
+			if(x != startX || y != startY){
+				moves.add(new Coordinate(x, y));
 			}
 			y--;
 		}

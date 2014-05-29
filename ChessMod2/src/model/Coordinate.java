@@ -33,17 +33,17 @@ public class Coordinate {
 	}
 	
 	public int convertNumbertoInt(char y){
-		return (int)y - 49;
+		return (int)y - '1';
 	}
 	
 	public int convertLettertoInt(char x){
 		x = Character.toUpperCase(x);
-		int col = (int)x - 65;
+		int col = (int)x - 'A';
 		return col;
 	}
 	
 	public char convertInttoChar(int x){
-		x += 65;
+		x += 'A';
 		char letter = (char)x;
 		return letter;
 	}

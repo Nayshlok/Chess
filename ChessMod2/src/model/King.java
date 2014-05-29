@@ -36,7 +36,6 @@ public class King extends Piece {
 				&& (changeY <= 1 && changeY >= -1)){
 			isValid = true;
 		} 
-		
 		return isValid;
 	}
 

@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import exceptions.BadMoveException;
 import exceptions.BlockedPathException;
@@ -36,7 +37,7 @@ public class Board {
 	public String printBoard(){
 		
 		String printedBoard = "  A B C D E F G H\n";
-		for(int i = 0; i < board.length; i++){
+		for(int i = board.length - 1; i >= 0; i--){
 			printedBoard += (i+1) + "|";
 			for(int j = 0; j < board[i].length; j++){
 				if(board[i][j] == null){
@@ -69,40 +70,37 @@ public class Board {
 	 * @throws IllegalMoveException 
 	 * @throws CheckException 
 	 */	
-	private boolean tryMove(Coordinate location1, Coordinate location2, boolean capture, boolean castle) throws NoPieceException, BadMoveException, BlockedPathException, NoFriendlyFireException, IllegalMoveException, CheckException{
+	private boolean tryMove(Coordinate location1, Coordinate location2, boolean capture, boolean castle, boolean checkingCheck) throws NoPieceException, BadMoveException, BlockedPathException, NoFriendlyFireException, IllegalMoveException, CheckException{
 		
 		Piece holder = getPiece(location1);
-		pieceMoveCheck(location1, location2, capture);
-		spaceCheck(location2, capture);
-		friendlyFireCheck(location1, location2, capture);
-		if((checkPath(location1, location2))
+		pieceMoveCheck(location1, location2, capture, castle);
+		spaceCheck(location2, capture, checkingCheck);
+		friendlyFireCheck(location1, location2, capture, checkingCheck);
+		if((pathIsClear(location1, location2))
 				|| (holder instanceof Knight)
 				|| castle){
-			Coordinate king = holder.isLight() ? lightKing : darkKing;
-			boolean inCheck = false;
-			if(!isEmpty(location2)){
-				Piece holder2 = getPiece(location2);
-				board[location1.getY()][location1.getX()] = null;
-				board[location2.getY()][location2.getX()] = holder;
-				inCheck = checkForCheck(king, holder.isLight());
-				board[location1.getY()][location1.getX()] = holder;
-				board[location2.getY()][location2.getX()] = holder2;
-			} else{
-				board[location1.getY()][location1.getX()] = null;
-				inCheck = checkForCheck(king, holder.isLight());
-				board[location1.getY()][location1.getX()] = holder;
+			if(!checkingCheck){
+				moveCauseCheck(holder, location1, location2);
 			}
-			if(inCheck){
-				throw new CheckException(holder.isLight());
-			}else {
-				return true;
-			}
+			return true;
 		}
 		else{
 			throw new BlockedPathException();
 		}
 	}
 	
+	public boolean legalMove(Coordinate location1, Coordinate location2, boolean capture, boolean castle, boolean checkingCheck) throws NoPieceException {
+
+		try {
+			tryMove(location1, location2, capture, castle, checkingCheck);
+			return true;
+		} catch (BadMoveException | BlockedPathException
+				| NoFriendlyFireException | IllegalMoveException | CheckException e) {
+			//Purposely ignore. The point of this method is to see if it is possible without caring about exceptions.
+		}
+		return false;
+	}
+
 	/**
 	 * If the move is valid as checked in the tryMove() method, it will move the pieces on the board.
 	 * @param location1
@@ -118,7 +116,7 @@ public class Board {
 	 */
 	public void movePieces(Coordinate location1, Coordinate location2, boolean capture, boolean castle) throws NoPieceException, BadMoveException, BlockedPathException, NoFriendlyFireException, IllegalMoveException, CheckException{
 		
-		if(tryMove(location1, location2, capture, castle)){
+		if(tryMove(location1, location2, capture, castle, false)){
 			Piece holder = getPiece(location1);
 			if(holder instanceof King){
 				if(holder.isLight()){
@@ -132,18 +130,6 @@ public class Board {
 		}
 	
 	}
-	
-	public boolean legalMove(Coordinate location1, Coordinate location2, boolean capture, boolean castle) throws NoPieceException {
-
-		try {
-			tryMove(location1, location2, capture, castle);
-			return true;
-		} catch (BadMoveException | BlockedPathException
-				| NoFriendlyFireException | IllegalMoveException | CheckException e) {
-			//Purposely ignore. The point of this method is to see if it is possible without caring about exceptions.
-		}
-		return false;
-	}
 
 	/**
 	 * This method will draw a diagonal or straight path from the second location to the first checking that all spaces are empty.
@@ -152,7 +138,7 @@ public class Board {
 	 * @param location2
 	 * @return
 	 */
-	public boolean checkPath(Coordinate location1, Coordinate location2){
+	public boolean pathIsClear(Coordinate location1, Coordinate location2){
 		boolean pathClear = true;
 		
 		int x1 = location1.getX();
@@ -191,39 +177,57 @@ public class Board {
 		return pathClear;
 	}
 	
-	public void friendlyFireCheck(Coordinate location1, Coordinate location2, boolean capture) throws NoFriendlyFireException{
-		if(capture){
+	public void moveCauseCheck(Piece holder, Coordinate location1, Coordinate location2) throws CheckException{
+		Coordinate king = (holder instanceof King) ? location2 : (holder.isLight() ? lightKing : darkKing);
+		boolean inCheck = false;
+
+		Piece holder2 = null;
+		try {
+			holder2 = getPiece(location2);
+		} catch (NoPieceException e) {
+			//left blank so that the holder2 will remain null when replacing the piece.
+		}
+		board[location1.getY()][location1.getX()] = null;
+		board[location2.getY()][location2.getX()] = holder;
+		inCheck = isInCheck(king, holder.isLight());
+		board[location1.getY()][location1.getX()] = holder;
+		board[location2.getY()][location2.getX()] = holder2;
+		
+		if(inCheck){
+			throw new CheckException(holder.isLight());
+		}
+		
+	}
+	
+	public void friendlyFireCheck(Coordinate location1, Coordinate location2, boolean capture, boolean checkingCheck) throws NoFriendlyFireException{
+		if(capture && !checkingCheck){
 			if(board[location1.getY()][location1.getX()].isLight() == board[location2.getY()][location2.getX()].isLight()){
 				throw new NoFriendlyFireException();
 			}
 		}
 	}
 	
-	public boolean spaceCheck(Coordinate location, boolean capture) throws BadMoveException{
-		if((isEmpty(location) && !capture) ||
-		(!isEmpty(location) && capture)){
-			return true;
-		}
-		else{
+	public void spaceCheck(Coordinate location, boolean capture, boolean checkingCheck) throws BadMoveException{
+		if(!(isEmpty(location) && (!capture || checkingCheck)) &&
+		!(!isEmpty(location) && (capture))){
 			throw new BadMoveException(location, capture);
 		}
 	}
 	
-	public boolean pieceMoveCheck(Coordinate location1, Coordinate location2, boolean capture) throws NoPieceException, IllegalMoveException{
+	public void pieceMoveCheck(Coordinate location1, Coordinate location2, boolean capture, boolean castle) throws NoPieceException, IllegalMoveException{
 		Piece holder = getPiece(location1);
-		if(holder.moveCheck(location1, location2, capture)){
-			return true;
-		} else{
+		if(!holder.moveCheck(location1, location2, capture) && !(holder instanceof King && castle)){
 			throw new IllegalMoveException(holder.toString());
 		}
 	}
+	
 	/**
 	 * Runs through the board checking to see if the king of the color passed in is in check in the specified location.
 	 * @param king
 	 * @param isLight
 	 * @return
-	 */
-	public boolean checkForCheck(Coordinate king, boolean isLight){
+	 */ 
+	public boolean isInCheck(Coordinate king, boolean isLight){
 		
 		for(int i = 0; i < board.length; i++){
 			for(int j = 0; j < board[i].length; j++){
@@ -231,11 +235,11 @@ public class Board {
 				if(!isEmpty(space)){
 					try{
 						Piece holder = getPiece(space);
-						if((holder.isLight() != isLight) &&	findDanger(king, space, holder.possibleMoves(space))){
+						if((holder.isLight() != isLight) &&	inDanger(king, space, holder.possibleMoves(space))){
 							return true;
 						}
 					} catch(NoPieceException e){
-						
+						//Left empty because I know I am picking up empty slots while I iterate through the board.
 					}
 				}
 			}
@@ -243,44 +247,57 @@ public class Board {
 		
 		return false;
 	}
-	
-	public boolean findDanger(Coordinate king, Coordinate otherPiece, ArrayList<Coordinate> moves) throws NoPieceException{
-		boolean isDanger = false;
-		
-		if(moves.contains(king) && legalMove(otherPiece, king, true, false)){
-			isDanger = true;
-		}
-		
-		return isDanger;
+
+	public boolean inDanger(Coordinate king, Coordinate otherPiece, ArrayList<Coordinate> moves) throws NoPieceException{
+		return moves.contains(king) && legalMove(otherPiece, king, true, false, true);
 	}
 	
 	public ArrayList<Coordinate> availableMoves(Coordinate location) throws NoPieceException{
 		
 		ArrayList<Coordinate> available = new ArrayList<Coordinate>();
+		ArrayList<Coordinate> possible = getPiece(location).possibleMoves(location);
 		
-		for(Coordinate a: getPiece(location).possibleMoves(location)){
-			if(legalMove(location, a, false, false) ||
-					legalMove(location, a, true, false)){
-				available.add(a);
+		for(int i = 0; i < possible.size(); i++){
+			if(legalMove(location, possible.get(i), false, false, false) ||
+					legalMove(location, possible.get(i), true, false, false)){
+				available.add(possible.get(i));
 			}
 		}
-		
+
 		return available;
 	}
 	
-	public HashMap<Coordinate, ArrayList<Coordinate>> allAvailableMoves(boolean isLight) throws NoPieceException{
+	public HashMap<Coordinate, ArrayList<Coordinate>> allAvailableMoves(boolean isLight){
 		HashMap<Coordinate, ArrayList<Coordinate>> allMoves = new HashMap<Coordinate, ArrayList<Coordinate>>();
 		
 		for(int i = 0; i < board.length; i++){
 			for(int j = 0; j < board[i].length; j++){
 				Coordinate test = new Coordinate(i, j);
-				if(!isEmpty(test) && getPiece(test).isLight() == isLight){
-					allMoves.put(test, availableMoves(test));
+				try{
+					if(getPiece(test).isLight() == isLight){
+						allMoves.put(test, availableMoves(test));
+					}
+				} catch(NoPieceException e){
+					//I'm going through the entire board and expect to get empty spaces. 
 				}
 			}
 		}
 		
 		return allMoves;
+	}
+	
+	public boolean haveMovesLeft(boolean isLight){
+
+		HashMap<Coordinate, ArrayList<Coordinate>> moves = allAvailableMoves(isLight);
+		Iterator<Coordinate> pieceLocations = moves.keySet().iterator();
+		for(Coordinate piece: moves.keySet()){
+			ArrayList<Coordinate> pieceMoves = moves.get(piece);
+			if(!pieceMoves.isEmpty()){
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -290,20 +307,17 @@ public class Board {
 	 * @throws OccupiedSpaceException
 	 */
 	public void placePiece(Piece piece, Coordinate location) throws OccupiedSpaceException{
-		if(isEmpty(location)){
-			board[location.getY()][location.getX()] = piece;
-			if(piece instanceof King){
-				if (piece.isLight()){
-					lightKing = location;
-				} else{
-					darkKing = location;
-				}
-			}
-		}
-		else {
+		if(!isEmpty(location)){
 			throw new OccupiedSpaceException(location);
 		}
-		
+		board[location.getY()][location.getX()] = piece;
+		if(piece instanceof King){
+			if (piece.isLight()){
+				lightKing = location;
+			} else{
+				darkKing = location;
+			}
+		}		
 	}
 
 	/**
@@ -312,12 +326,7 @@ public class Board {
 	 * @return
 	 */
 	public boolean isEmpty(Coordinate location){
-		if(board[location.getY()][location.getX()] == null){
-			return true;
-		}
-		else{
-			return false;
-		}
+		return (board[location.getY()][location.getX()] == null);
 	}
 
 	/**
@@ -335,6 +344,10 @@ public class Board {
 		}
 	}
 
+	public boolean inCheckMate(boolean isLight){
+		return (this.isInCheck(getKing(isLight), isLight) && !this.haveMovesLeft(isLight));
+	}
+	
 	public Coordinate getKing(boolean isLight){
 		Coordinate king = isLight ? lightKing : darkKing;
 		return king;
@@ -347,5 +360,4 @@ public class Board {
 	public int getRows(){
 		return ROW;
 	}
-	
 }

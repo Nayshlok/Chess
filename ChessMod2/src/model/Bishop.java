@@ -105,4 +105,23 @@ public class Bishop extends Piece {
 		return moves;
 	}
 	
+	/*
+	public void addMoves(Coordinate location1, int maxY, int maxX, int xInc, int yInc, ArrayList<Coordinate> moves){
+		int startX = location1.getX();
+		int startY = location1.getY();
+		int x = startX;
+		int y = startY;
+		
+		while(x < maxX && y < maxY){
+			if(x != startX && y != startY){
+				Coordinate toAdd = new Coordinate(x, y);
+				if(this.checkInRange(toAdd)){
+					moves.add(new Coordinate(x, y));
+				}
+			}
+			x += xInc;
+			y += yInc;
+		}
+	}
+	*/
 }
