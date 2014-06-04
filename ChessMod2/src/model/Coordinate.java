@@ -21,6 +21,7 @@ public class Coordinate {
 	}
 
 	public void setX(int x){
+		x = ensureRange(x);
 			this.x = x;
 	}
 
@@ -29,7 +30,8 @@ public class Coordinate {
 	}
 
 	public void setY(int y){
-			this.y = y;
+		y = ensureRange(y);
+		this.y = y;
 	}
 	
 	public int convertNumbertoInt(char y){
@@ -50,6 +52,17 @@ public class Coordinate {
 	
 	public String toString(){
 		return (convertInttoChar(this.x) + "" + (y + 1));
+	}
+	
+	public int ensureRange(int n){
+		if(n > 7){
+			n = 7;
+		}
+		if(n < 0){
+			n = 0;
+		}
+		
+		return n;
 	}
 	
 	@Override

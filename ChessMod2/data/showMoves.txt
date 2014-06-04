@@ -1,0 +1,25 @@
+		//Experimenting zone.
+		/*
+		try {
+			HashMap<Coordinate, ArrayList<Coordinate>> moves = gameBoard.allAvailableMoves(true);
+			Iterator<Coordinate> pieceLocations = moves.keySet().iterator();
+			while(pieceLocations.hasNext()){
+				Coordinate piece = pieceLocations.next();
+				ArrayList<Coordinate> pieceMoves = moves.get(piece);
+				for(Coordinate a: pieceMoves){
+					System.out.println(gameBoard.getPiece(piece) + " at location " + piece + " to location " + a);
+				}
+				
+			}
+		}
+		catch (NoPieceException e) {
+			
+		}
+ 		/*
+		try{			
+			ArrayList<Coordinate> moves = gameBoard.availableMoves(gameBoard.getKing(true));
+			for(Coordinate a : moves)
+				System.out.println(a);
+		} catch (NoPieceException e) {
+			
+		}*/

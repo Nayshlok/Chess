@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import exceptions.BadMoveException;
+import exceptions.BadPromotionException;
 import exceptions.BlockedPathException;
 import exceptions.CheckException;
 import exceptions.IllegalMoveException;
@@ -19,24 +20,28 @@ import exceptions.OccupiedSpaceException;
  * @author David Borland
  *
  */
-public class Board {
+public class Board{
 
 	private Piece[][] board;
 	private final int ROW = 8;
 	private final int COLUMN = 8;
-	private Coordinate lightKing, darkKing;
+	private Coordinate lightKing, darkKing, pawnLocation;
+	private boolean canPromotePawn;
 	
 	public Board(){
 		board = new Piece[COLUMN][ROW];
 	}
 	
+	public Board(Piece[][] newBoard){
+		board = newBoard;
+	}
 	/**
 	 * Returns a string containing an ascii board of the current status of chess.
 	 * @return
 	 */
 	public String printBoard(){
 		
-		String printedBoard = "  A B C D E F G H\n";
+		String printedBoard = "";
 		for(int i = board.length - 1; i >= 0; i--){
 			printedBoard += (i+1) + "|";
 			for(int j = 0; j < board[i].length; j++){
@@ -50,7 +55,7 @@ public class Board {
 			printedBoard += "\n";
 		}
 
-
+		printedBoard += "  A B C D E F G H\n";
 		return printedBoard;
 	}
 
@@ -124,6 +129,10 @@ public class Board {
 				} else{
 					darkKing = location2;
 				}
+			}
+			if(holder instanceof Pawn && (location2.getY() == 7 || location2.getY() == 0)){
+				canPromotePawn = true;
+				pawnLocation = location2;
 			}
 			board[location1.getY()][location1.getX()] = null;
 			board[location2.getY()][location2.getX()] = holder;
@@ -275,7 +284,9 @@ public class Board {
 				Coordinate test = new Coordinate(i, j);
 				try{
 					if(getPiece(test).isLight() == isLight){
-						allMoves.put(test, availableMoves(test));
+						if(!availableMoves(test).isEmpty()){
+							allMoves.put(test, availableMoves(test));
+						}
 					}
 				} catch(NoPieceException e){
 					//I'm going through the entire board and expect to get empty spaces. 
@@ -348,6 +359,21 @@ public class Board {
 		return (this.isInCheck(getKing(isLight), isLight) && !this.haveMovesLeft(isLight));
 	}
 	
+	public void promotePawn(Piece replacement) throws BadPromotionException{
+		if(!canPromotePawn){
+			throw new BadPromotionException("You are not allowed to promote yet");
+		}
+		if(replacement instanceof King || replacement instanceof Pawn){
+			throw new BadPromotionException("That is not a valid piece to promote to.");
+		}
+		board[pawnLocation.getY()][pawnLocation.getX()] = replacement;
+		canPromotePawn = false;
+	}
+	
+	public boolean canPromotePawn(){
+		return canPromotePawn;
+	}
+	
 	public Coordinate getKing(boolean isLight){
 		Coordinate king = isLight ? lightKing : darkKing;
 		return king;
@@ -359,5 +385,15 @@ public class Board {
 	
 	public int getRows(){
 		return ROW;
+	}
+	
+	public Piece[][] getBoard(){
+		Piece[][] test = new Piece[COLUMN][ROW];
+		for(int i = 0; i < test.length; i++){
+			for(int j = 0; j < test[i].length; j++){
+				test[i][j] = board[i][j];
+			}
+		}
+		return test;
 	}
 }

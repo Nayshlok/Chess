@@ -10,5 +10,8 @@ public class KingFactory implements Factory{
 		return new King(isLight, rowCount, colCount);
 	}
 
-	
+	@Override
+	public String toString(){
+		return "King";
+	}
 }

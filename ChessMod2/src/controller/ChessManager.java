@@ -1,21 +1,20 @@
 package controller;
 
-import java.awt.DisplayMode;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import model.Board;
 import model.Coordinate;
 import model.King;
 import model.Piece;
 import model.Rook;
+import view.Chessgui;
 import view.TextDisplay;
 import exceptions.BadMoveException;
+import exceptions.BadPromotionException;
 import exceptions.BlockedPathException;
 import exceptions.CastleException;
 import exceptions.CheckException;
@@ -44,6 +43,7 @@ public class ChessManager {
 	private TextDisplay textDisplay;
 	private HashMap<Character, Factory> pieceNames;
 	private boolean isLightTurn;
+	private Chessgui gui;
 	
 	public ChessManager(){
 		gameBoard = new Board();
@@ -58,56 +58,52 @@ public class ChessManager {
 		pieceNames.put('R', new RookFactory());
 		pieceNames.put('P', new PawnFactory());
 		
+		
+		gui = new Chessgui(gameBoard, this);
 	}
 
 	public void run(String fileName){
 
 		readMoves("data\\setup.txt");
 
-		textDisplay.displayBoard();
+		//textDisplay.displayBoard();
 
-		//readMoves(fileName);
-		this.playGame();
+		readMoves(fileName);
+//		textDisplay.displayBoard();
+//		this.playGame();
 		
-		textDisplay.displayBoard();
-		textDisplay.displayCheckStatus(true);
-		textDisplay.displayCheckStatus(false);
-		textDisplay.displayCheckMate(true);
-		textDisplay.displayCheckMate(false);
-
+//		textDisplay.displayBoard();
+//		textDisplay.displayCheckStatus(true);
+//		textDisplay.displayCheckStatus(false);
+//		textDisplay.displayCheckMate(true);
+//		textDisplay.displayCheckMate(false);
+		gui.update();
 		//textDisplay.displayPieceMoves(true);
-		//Experimenting zone.
-		/*
-		try {
-			HashMap<Coordinate, ArrayList<Coordinate>> moves = gameBoard.allAvailableMoves(true);
-			Iterator<Coordinate> pieceLocations = moves.keySet().iterator();
-			while(pieceLocations.hasNext()){
-				Coordinate piece = pieceLocations.next();
-				ArrayList<Coordinate> pieceMoves = moves.get(piece);
-				for(Coordinate a: pieceMoves){
-					System.out.println(gameBoard.getPiece(piece) + " at location " + piece + " to location " + a);
-				}
-				
-			}
-		}
-		catch (NoPieceException e) {
-			
-		}
- 		/*
-		try{			
-			ArrayList<Coordinate> moves = gameBoard.availableMoves(gameBoard.getKing(true));
-			for(Coordinate a : moves)
-				System.out.println(a);
-		} catch (NoPieceException e) {
-			
-		}*/
+
 	}
 
-	public void playGame(){
-		while(gameBoard.haveMovesLeft(isLightTurn)){
-			textDisplay.askForMove(isLightTurn);
-		}
+	public void startGame(){
+		gameBoard = new Board();
+		readMoves("data\\setup.txt");
+		isLightTurn = true;
+		gui.playGame(gameBoard);
 	}
+	
+//	public void playGame(){
+//		while(gameBoard.haveMovesLeft(isLightTurn)){
+//			textDisplay.askForMove(isLightTurn);
+//			if(gameBoard.canPromotePawn()){
+//				Piece replacement = pieceNames.get(textDisplay.getPieceToPromote()).create(!isLightTurn, gameBoard.getRows(), gameBoard.getColumns());
+//				try {
+//					gameBoard.promotePawn(replacement);
+//				} catch (BadPromotionException e) {
+//					textDisplay.displayException(e);
+//				}
+//			}
+//			
+//			textDisplay.displayBoard();
+//		}
+//	}
 	
 	/**
 	 * Reads a text file at the path passed into parameter. It will then pass the lines read to the 
@@ -127,7 +123,8 @@ public class ChessManager {
 					interpretMove(line);
 				}
 				catch(OutOfOrderException | NoPieceException | BadMoveException | BlockedPathException | NoFriendlyFireException | IllegalMoveException | CheckException | CastleException | OccupiedSpaceException e){
-					textDisplay.displayException(e);
+//					textDisplay.displayException(e);
+					System.err.println(e.getMessage());
 				}
 			}
 			reader.close();
@@ -184,9 +181,6 @@ public class ChessManager {
 	
 			if(movePiece(location1, location2, capture)){
 				changeTurn();
-				textDisplay.displayCheckStatus(isLightTurn);
-				textDisplay.displayCheckMate(isLightTurn);
-
 				success = true;
 			}
 			
@@ -196,7 +190,6 @@ public class ChessManager {
 				//switch turns
 				if(castle(move)){
 					changeTurn();
-					textDisplay.displayCheckStatus(isLightTurn);
 					success = true;
 				}	
 		}
@@ -223,11 +216,13 @@ public class ChessManager {
 		}
 		this.gameBoard.movePieces(location1, location2, capture, false);
 
-		textDisplay.displayMove(piece1, location1, piece2, location2, capture);
+		textDisplay.displayStandardMove(location1, location2, capture);
+		//textDisplay.displayMove(piece1, location1, piece2, location2, capture);
 		//Switch turns
 		if(!piece1.hasMoved()){piece1.setMoved(true);}
-		textDisplay.displayBoard();
-
+		//textDisplay.displayBoard();
+		gui.update();
+		
 		return true;
 	}
 	
@@ -292,7 +287,7 @@ public class ChessManager {
 		castleMove(kingLocation1, kingLocation2, rookLocation1, rookLocation2);
 		piece1.setMoved(true);
 		piece2.setMoved(true);
-		textDisplay.displayBoard();
+//		textDisplay.displayBoard();
 		return true;
 
 	}

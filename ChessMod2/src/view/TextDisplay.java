@@ -24,11 +24,18 @@ public class TextDisplay {
 	private Board board;
 	private ChessManager manager;
 	private Scanner input;
+	private HashMap<String, Character> pieceNames;
+
 	
 	public TextDisplay(Board board, ChessManager manager){
 		this.board = board;
 		this.manager = manager;
 		input = new Scanner(System.in);
+		pieceNames = new HashMap<String, Character>();
+		pieceNames.put("queen", 'Q');
+		pieceNames.put("bishop", 'B');
+		pieceNames.put("knight", 'N');
+		pieceNames.put("rook", 'R');
 	}
 	
 	public void displayText(String message){
@@ -40,14 +47,19 @@ public class TextDisplay {
 		if(capture){response += " and capture the " + piece2 + " in that spot.";}
 		System.out.println(response);
 	}
+	public void displayStandardMove(Coordinate location1, Coordinate location2, boolean capture){
+		System.out.println(location1 + " " + location2 + (capture ? "*" : ""));
+	}
 	
 	public void displayBoard(){
 		System.out.println(board.printBoard());
 	}
 		
 	public void displayCheckStatus(boolean isLight){
-		String message = (isLight ? "White King" : "Dark King") + " is in check: " + board.isInCheck(board.getKing(isLight), isLight);
-		System.out.println(message);
+		if(board.isInCheck(board.getKing(isLight), isLight)){
+			String message = ((isLight ? "White King" : "Dark King") + " is in check!");
+			System.out.println(message);
+		}
 	}
 	
 	public void displayCheckMate(boolean isLight){
@@ -89,6 +101,10 @@ public class TextDisplay {
 		String pieceLocation1 = "";
 		String pieceLocation2 = "";
 		Coordinate piece1 = null;
+		Coordinate piece2 = new Coordinate(0, 0);
+		
+		displayCheckStatus(isLightTurn);
+		displayCheckMate(isLightTurn);
 		
 		displayPieceMoves(isLightTurn);
 		while(!success){
@@ -100,7 +116,24 @@ public class TextDisplay {
 				if(moves.containsKey(piece1)){
 					displayAvailableMoves(piece1);
 					if(!moves.get(piece1).isEmpty()){
-						success = true;
+						boolean secondMove = false;
+						while(!secondMove){
+							System.out.println("Enter the coordinates you want to move to (a0 to go back): ");
+							pieceLocation2 = getCoordinate();
+							if(pieceLocation2.equals("a0")){
+								System.out.println();
+								displayPieceMoves(isLightTurn);
+								secondMove = true;
+								}
+							piece2 = new Coordinate(pieceLocation2.charAt(0), pieceLocation2.charAt(1));
+							if(board.availableMoves(piece1).contains(piece2)){
+								success = true;
+								secondMove = true;
+							}
+							else{
+								System.err.println("The piece can't move there");
+							}
+						}
 					}
 					else{
 						System.err.println("That piece has no moves");
@@ -112,29 +145,11 @@ public class TextDisplay {
 				System.err.println("The location " + e.getCoordinate() + " doesn't have a piece" );
 			}
 		}
-		success = false;
-		while(!success){
-			System.out.println("Enter the coordinates you want to move to: ");
-			pieceLocation2 = getCoordinate();
-			if(pieceLocation2.equals("0")){
-				askForMove(isLightTurn);
-				return;
-				}
-			Coordinate piece2 = new Coordinate(pieceLocation2.charAt(0), pieceLocation2.charAt(1));
-			try {
-				if(board.availableMoves(piece1).contains(piece2)){
-					success = true;
-				}
-				else{
-					System.err.println("The piece can't move there");
-				}
-			} catch (NoPieceException e) {
-				e.printStackTrace();
-			}
-		}
-		System.out.println("Move " + pieceLocation1 + " " + pieceLocation2);
+		
+		String move = pieceLocation1 + " " + pieceLocation2 + (board.isEmpty(piece2) ? "" : "*") ;
+		System.out.println("Move " + move);
 		try {
-			manager.interpretMove(pieceLocation1 + " " + pieceLocation2);
+			manager.interpretMove(move);
 		} catch (NoPieceException | BadMoveException | BlockedPathException
 				| NoFriendlyFireException | IllegalMoveException
 				| CheckException | OutOfOrderException | CastleException
@@ -146,12 +161,27 @@ public class TextDisplay {
 	public String getCoordinate(){
 		while(true){
 			String pieceLocation = input.nextLine();
-			if(pieceLocation.matches("[A-Ha-h][1-8]") || pieceLocation.equals("0")){
+			if(pieceLocation.matches("([A-Ha-h][1-8])|[Aa]0")){
 				return pieceLocation;
 			} else{
 				System.err.println("Invalid coordinate: " + pieceLocation);
 			}
 		}
+	}
+	
+	public char getPieceToPromote(){
+		Character piece = null;
+		
+		while (piece == null){
+			System.out.println("What would you like to promote your pawn to? (Enter full name, no pawn or king) ");
+			String user = input.nextLine();
+			user = user.toLowerCase();
+			piece = pieceNames.get(user);
+			if(piece == null){
+				System.err.println("That was not a valid name.");
+			}
+		}
+		return piece;
 	}
 	
 }

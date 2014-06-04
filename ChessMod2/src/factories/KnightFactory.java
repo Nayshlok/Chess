@@ -10,5 +10,8 @@ public class KnightFactory implements Factory{
 		return new Knight(isLight, rowCount, colCount);
 	}
 
-	
+	@Override
+	public String toString(){
+		return "Knight";
+	}
 }

@@ -10,5 +10,8 @@ public class BishopFactory implements Factory{
 		return new Bishop(isLight, rowCount, colCount);
 	}
 
-	
+	@Override
+	public String toString(){
+		return "Bishop";
+	}
 }

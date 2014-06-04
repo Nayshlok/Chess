@@ -10,5 +10,9 @@ public class QueenFactory implements Factory{
 		return new Queen(isLight, rowCount, colCount);
 	}
 
+	@Override
+	public String toString(){
+		return "Queen";
+	}
 	
 }

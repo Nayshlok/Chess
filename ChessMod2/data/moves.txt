@@ -1,9 +1,10 @@
-Kde8
-Kle1
-//rdh1
-//blf1
-bdb5
-rda2
-//nde3
-rla7
-qle7
+a2 a4
+b7 b5
+a4 b5*
+b8 c6
+b5 b6
+c6 d4
+b6 b7
+d4 b3
+a1 a7*
+b3 c1*

@@ -10,5 +10,8 @@ public class RookFactory implements Factory{
 		return new Rook(isLight, rowCount, colCount);
 	}
 
-	
+	@Override
+	public String toString(){
+		return "Rook";
+	}
 }

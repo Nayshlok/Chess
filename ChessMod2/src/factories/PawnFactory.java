@@ -10,5 +10,8 @@ public class PawnFactory implements Factory{
 		return new Pawn(isLight, rowCount, colCount);
 	}
 
-	
+	@Override
+	public String toString(){
+		return "Pawn";
+	}
 }

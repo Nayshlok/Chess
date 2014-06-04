@@ -1,5 +1,6 @@
 package module2;
 
+import view.Chessgui;
 import controller.ChessManager;
 
 public class MainFile {
